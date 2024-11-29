@@ -1,0 +1,565 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.7 SRAM &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="3. Prototype Verificaton On FPGA" href="../fpga.html" />
+    <link rel="prev" title="2.6 QSPI" href="qspi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">1. START</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Hardware</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Overview.html">2.1 OVERVIEW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpio.html">2.2 GPIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uart.html">2.3 UART</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spi.html">2.4 SPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag.html">2.5 JTAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qspi.html">2.6 QSPI</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.7 SRAM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sram-controller-technical-specification">2.7.1 SRAM Controller Technical Specification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#features">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theory-of-operation">2.7.2 Theory of Operation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-the-controller-handles-integrity-errors">How the Controller handles Integrity Errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lfsr-initialization-mechanism">LFSR Initialization Mechanism</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#executing-code-via-sram">Executing Code via SRAM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#read-and-write-sequences">Read and Write Sequences</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#design-verification">2.7.3 Design Verification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#programming-guide">Programming Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-interfaces">2.7.4 Hardware Interfaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">2.7.4.1 Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#external-signal-interfaces">2.7.4.2 External Signal Interfaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internal-signal-interfaces">2.7.4.3 Internal Signal Interfaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alert-signals">2.7.4.4 Alert Signals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#safety-measures">2.7.4.5 Safety Measures</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#register">2.7.5 Register</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#external-interface-function">2.7.6 External Interface Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checklist">2.7.7 Checklist</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../fpga.html">3. Prototype Verificaton On FPGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend.html">4 Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device.html">5. DEVICE(SD)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">2. Hardware</a></li>
+      <li class="breadcrumb-item active">2.7 SRAM</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/pages/hardware/sram.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sram">
+<h1>2.7 SRAM<a class="headerlink" href="#sram" title="Link to this heading"></a></h1>
+<section id="sram-controller-technical-specification">
+<h2>2.7.1 SRAM Controller Technical Specification<a class="headerlink" href="#sram-controller-technical-specification" title="Link to this heading"></a></h2>
+<p><img alt="alt text" src="../../_images/image-241.png" /></p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>The SRAM controller incorporates the SRAM data and address scrambling device and provides CSRs for requesting the scrambling keys and triggering the hardware initialization feature.
+In the SRAM Controller of the hw platform, we added a Scramble module (acting on data and addr) and provided CSRs (used for requesting Scramble keys and triggering hardware initialization).
+<a class="reference external" href="https://opentitan.org/book/hw/ip/sram_ctrl/doc/theory_of_operation.html">This summary draws reference from the content of the OpenTitan Hard-Ware article.</a>
+This is an interpretat**ion of the hw part of the sram_ctrl code.</p>
+</section>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Lightweight scrambling mechanism</strong> based on the PRINCE cipher.</p></li>
+<li><p>Key request logic for the lightweight memory and address scrambling device.</p></li>
+<li><p>Alert sender and checking logic for detecting bus integrity failures.</p></li>
+<li><p>LFSR-based memory initialization feature.</p></li>
+<li><p>Access controls to allow / disallow code execution from SRAM.</p></li>
+<li><p>Security hardening when integrity error has been detected.</p></li>
+</ul>
+</section>
+</section>
+<section id="theory-of-operation">
+<h2>2.7.2 Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Link to this heading"></a></h2>
+<p>This section explains how the module controls external IRAM through software analysis.</p>
+<div align=center>  <p><img alt="alt text" src="../../_images/image-121.png" /></p>
+<div>
+<div align=left><div>       <p>The main structure is concentrated on the left side of the diagram, with a hardware instance application on the right.</p>
+<p>It is mainly divided into the following parts:</p>
+<ul class="simple">
+<li><p>TL-UL SRAM Adapter;</p></li>
+<li><p>LFSR: Used for initialization (mechanism detailed in [1.2. Section](### 1.2. LFSR Initialization Mechanism));</p></li>
+<li><p>CSRs;</p></li>
+<li><p>Key request.</p></li>
+</ul>
+<section id="how-the-controller-handles-integrity-errors">
+<h3>How the Controller handles Integrity Errors<a class="headerlink" href="#how-the-controller-handles-integrity-errors" title="Link to this heading"></a></h3>
+<p>When encountering an <strong>Integrity Error</strong>, <code class="docutils literal notranslate"><span class="pre">sram_ctrl</span></code> will latch the integrity error and issue a <code class="docutils literal notranslate"><span class="pre">fatal_bus_integ_error</span></code> until the next reset (the generation of integrity errors is determined by system integration).</p>
+<p>Additionally, the latched error condition is fed into the <code class="docutils literal notranslate"><span class="pre">prim_ram_1p_scr</span></code> primitive via a dedicated input, causing the scrambling primitive to perform the following actions:</p>
+<ul class="simple">
+<li><p>Invert the pseudorandom number used during address and CTR scrambling;</p></li>
+<li><p>Disable any transactions (read or write) to the actual memory macro.</p></li>
+</ul>
+</section>
+<section id="lfsr-initialization-mechanism">
+<h3>LFSR Initialization Mechanism<a class="headerlink" href="#lfsr-initialization-mechanism" title="Link to this heading"></a></h3>
+<p>Since the <strong>Scramble device</strong> uses a block cipher in CTR mode, from a security perspective, it is undesirable to initialize the memory to all zeros (this would leak the XOR keystream).</p>
+<p>To avoid this, <code class="docutils literal notranslate"><span class="pre">sram_ctrl</span></code> includes an LFSR-based initialization mechanism that overwrites the entire memory with pseudo-random data.</p>
+<p>Initialization can be triggered via the <code class="docutils literal notranslate"><span class="pre">CTRL.INIT</span></code> CSR. When initialization is triggered, the LFSR is first re-seeded using the obtained random number and the scrambling key. Then, the pseudo-random data extracted from the LFSR is used to initialize the memory.</p>
+<p>For each pseudo-random 32-bit data, the initialization mechanism calculates the corresponding integrity bits and writes the data and integrity bits (a total of 39 bits) through the scrambling device using the most recently obtained scrambling key.</p>
+<p>If the Scrambling Key update and LFSR initialization are triggered simultaneously on the software side (i.e., the software uses the same CSR write operation as the LFSR), the LFSR initialization will be halted until the updated Scrambling Key is obtained.</p>
+<p>There is no limit on the frequency of calls to the initialization function, so it can also be used at runtime as a cheap SRAM erase mechanism. However, note that the PRNG sequence does not have strong security guarantees, as it is generated using an LFSR.</p>
+</section>
+<section id="executing-code-via-sram">
+<h3>Executing Code via SRAM<a class="headerlink" href="#executing-code-via-sram" title="Link to this heading"></a></h3>
+<p>The enable signal of the RAM ctrl is controlled by <code class="docutils literal notranslate"><span class="pre">otp_ctrl</span></code>;</p>
+<div align=center>  <p><img alt="alt text" src="../../_images/image-131.png" /></p>
+<div>
+<div align=left><div>   </section>
+<section id="read-and-write-sequences">
+<h3>Read and Write Sequences<a class="headerlink" href="#read-and-write-sequences" title="Link to this heading"></a></h3>
+<p>Combining the original text, the timing requirements for read and write operations are as follows:</p>
+<ul class="simple">
+<li><p>For timing reasons, the scrambling primitive instantiates a register in the middle of the PRINCE block cipher;</p></li>
+<li><p>Write operations must be delayed by 1 cycle;</p></li>
+<li><p>Sub-word write accesses currently require read-modify-write operations to recalculate the integrity bits of the entire word.</p></li>
+</ul>
+</section>
+</section>
+<section id="design-verification">
+<h2>2.7.3 Design Verification<a class="headerlink" href="#design-verification" title="Link to this heading"></a></h2>
+<p>The test plan objectives for the SRAM Controller (for dvsim) are as follows:</p>
+<ul class="simple">
+<li><p>Verify all SRAM_CTRL IP functionalities through dynamic simulations using SV/UVM-based test benches.</p></li>
+<li><p>Develop and run all tests according to the test plan to close code and functional coverage for the IP and all its submodules (excluding pre-verified submodules).</p></li>
+<li><p>Refer to the <a class="reference external" href="https://opentitan.org/book/hw/ip/sram_ctrl/dv/index.html#top-level-testbench">OpenTitan SRAM CTRL test plan</a> for specific test cases.</p></li>
+</ul>
+<section id="programming-guide">
+<h3>Programming Guide<a class="headerlink" href="#programming-guide" title="Link to this heading"></a></h3>
+<p>For software-side operational procedures, refer to the <a class="reference external" href="https://opentitan.org/book/hw/ip/sram_ctrl/doc/programmers_guide.html">OpenTitan SRAM CTRL software debugging guide</a>.</p>
+</section>
+</section>
+<section id="hardware-interfaces">
+<h2>2.7.4 Hardware Interfaces<a class="headerlink" href="#hardware-interfaces" title="Link to this heading"></a></h2>
+<p>This section includes parameters, signals, security signals, and handshake signal behavior with external modules (including OTP and Scramble devices). The <strong>handshake signal behavior with external modules (including OTP and Scramble devices)</strong> is also described in terms of software-side security measures.</p>
+<section id="parameters">
+<h3>2.7.4.1 Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Default</th>
+<th style="text-align: center;">Top Earlgrey</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>AlertAsyncOn</code></td>
+<td style="text-align: center;">1'b1</td>
+<td style="text-align: center;">1'b1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>InstrExec</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Enable execution from SRAM side</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>MemSizeRam</code></td>
+<td style="text-align: center;">4096</td>
+<td style="text-align: center;">(multiple values)</td>
+<td style="text-align: center;">Number of 32-bit words in SRAM (overridable by topgen)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>RndCnstSramKey</code></td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">Random default constant for Scrambling Key at compile time</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>RndCnstSramNonce</code></td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">Random default constant for Scrambling Nonce at compile time</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>RndCnstLfsrSeed</code></td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">Random default constant for LFSR seed at compile time</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>RndCnstLfsrPerm</code></td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">(see RTL)</td>
+<td style="text-align: center;">Random default constants for LFSR permutation at compile time</td>
+</tr>
+</tbody>
+</table></section>
+<section id="external-signal-interfaces">
+<h3>2.7.4.2 External Signal Interfaces<a class="headerlink" href="#external-signal-interfaces" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">sram_ctrl</span></code> module defines the following hardware interfaces:</p>
+<ul class="simple">
+<li><p>Main clock: <code class="docutils literal notranslate"><span class="pre">clk_i</span></code></p></li>
+<li><p>Other clocks (OTP device): <code class="docutils literal notranslate"><span class="pre">clk_otp_i</span></code></p></li>
+<li><p>Bus device interface (TL-UL): <code class="docutils literal notranslate"><span class="pre">regs_tl</span></code>, <code class="docutils literal notranslate"><span class="pre">ram_tl</span></code></p></li>
+<li><p>Bus host interface (TL-UL): none</p></li>
+<li><p>Chip IO peripheral pins: none</p></li>
+<li><p>Interrupts: none</p></li>
+</ul>
+</section>
+<section id="internal-signal-interfaces">
+<h3>2.7.4.3 Internal Signal Interfaces<a class="headerlink" href="#internal-signal-interfaces" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Port Name</th>
+<th style="text-align: center;">Package::Struct</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Act</th>
+<th style="text-align: center;">Width</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>sram_otp_key</code></td>
+<td style="text-align: center;"><code>otp_ctrl_pkg::sram_otp_key</code></td>
+<td style="text-align: center;"><code>req_rsp</code></td>
+<td style="text-align: center;"><code>req</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>cfg</code></td>
+<td style="text-align: center;"><code>prim_ram_1p_pkg::ram_1p_cfg</code></td>
+<td style="text-align: center;"><code>uni</code></td>
+<td style="text-align: center;"><code>rcv</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Routine signal cfg</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>lc_escalate_en</code></td>
+<td style="text-align: center;"><code>lc_ctrl_pkg::lc_tx</code></td>
+<td style="text-align: center;"><code>uni</code></td>
+<td style="text-align: center;"><code>rcv</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Global and local upgrade enable</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>lc_hw_debug_en</code></td>
+<td style="text-align: center;"><code>lc_ctrl_pkg::lc_tx</code></td>
+<td style="text-align: center;"><code>uni</code></td>
+<td style="text-align: center;"><code>rcv</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>otp_en_sram_ifetch</code></td>
+<td style="text-align: center;"><code>prim_mubi_pkg::mubi8</code></td>
+<td style="text-align: center;"><code>uni</code></td>
+<td style="text-align: center;"><code>rcv</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>regs_tl</code></td>
+<td style="text-align: center;"><code>tlul_pkg::tl</code></td>
+<td style="text-align: center;"><code>req_rsp</code></td>
+<td style="text-align: center;"><code>rsp</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>ram_tl</code></td>
+<td style="text-align: center;"><code>tlul_pkg::tl</code></td>
+<td style="text-align: center;"><code>req_rsp</code></td>
+<td style="text-align: center;"><code>rsp</code></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></section>
+<section id="alert-signals">
+<h3>2.7.4.4 Alert Signals<a class="headerlink" href="#alert-signals" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: left;">Alert Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>fatal_error</code></td>
+<td style="text-align: left;">Triggered when a fatal TL-UL bus integrity failure or initialization mechanism reaches an invalid state.</td>
+</tr>
+</tbody>
+</table></section>
+<section id="safety-measures">
+<h3>2.7.4.5 Safety Measures<a class="headerlink" href="#safety-measures" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Countermeasure ID</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.BUS.INTEGRITY</code></td>
+<td style="text-align: center;">End-to-end bus integrity scheme.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.CTRL.CONFIG.REGWEN</code></td>
+<td style="text-align: center;">SRAM control registers are protected by REGWEN.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.EXEC.CONFIG.REGWEN</code></td>
+<td style="text-align: center;">SRAM execution enable register is protected by REGWEN.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.EXEC.CONFIG.MUBI</code></td>
+<td style="text-align: center;">SRAM execution enable register is multi-bit encoded.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.EXEC.INTERSIG.MUBI</code></td>
+<td style="text-align: center;">SRAM execution enable signal from OTP is multi-bit encoded.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.LC_ESCALATE_EN.INTERSIG.MUBI</code></td>
+<td style="text-align: center;">Life cycle escalation enable signal is multi-bit encoded.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.LC_HW_DEBUG_EN.INTERSIG.MUBI</code></td>
+<td style="text-align: center;">Life cycle hardware debug enable signal is multi-bit encoded.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.MEM.INTEGRITY</code></td>
+<td style="text-align: center;">End-to-end data/memory integrity scheme.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.MEM.SCRAMBLE</code></td>
+<td style="text-align: center;">Data is scrambled using a key-reduced round PRINCE cipher in CTR mode.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.ADDR.SCRAMBLE</code></td>
+<td style="text-align: center;">Addresses are scrambled using a keyed lightweight permutation/diffusion function.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.INSTR.BUS.LC_GATED</code></td>
+<td style="text-align: center;">Prevent code execution from SRAM during non-test lifecycle states.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.RAM_TL_LC_GATE.FSM.SPARSE</code></td>
+<td style="text-align: center;">Control FSM within TL-UL gating primitive is sparse encoded.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.KEY.GLOBAL_ESC</code></td>
+<td style="text-align: center;">Scrambling key and nonce are reset to fixed values during escalation, and bus transactions to memory are blocked.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.KEY.LOCAL_ESC</code></td>
+<td style="text-align: center;">Scrambling key and nonce are reset to fixed values during local escalation due to bus integrity or counter errors, and bus transactions to memory are blocked.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.INIT.CTR.REDUN</code></td>
+<td style="text-align: center;">Initialization counter is redundant.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.SCRAMBLE.KEY.SIDELOAD</code></td>
+<td style="text-align: center;">Scrambling key is sideloaded from OTP and cannot be read by software.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>SRAM_CTRL.TLUL_FIFO.CTR.REDUN</code></td>
+<td style="text-align: center;">TL-UL response FIFO pointers are implemented using redundant counters.</td>
+</tr>
+</tbody>
+</table><section id="interface-between-otp-and-sram-scrambling-primitives">
+<h4>2.7.4.5.1 Interface between OTP and SRAM Scrambling Primitives<a class="headerlink" href="#interface-between-otp-and-sram-scrambling-primitives" title="Link to this heading"></a></h4>
+<div align=center>  <p><img alt="alt text" src="../../_images/image-141.png" /></p>
+<div>  <div align=left><div>     <ul class="simple">
+<li><p>The <strong>key derivation interface within OTP CTRL (i.e., <code class="docutils literal notranslate"><span class="pre">sram_otp_key</span></code>)</strong> follows a simple req/ack handshake protocol.</p>
+<ol class="simple">
+<li><p>SRAM CTRL requests an updated transient key by asserting <code class="docutils literal notranslate"><span class="pre">sram_otp_key_i.req</span></code>.</p></li>
+<li><p>The OTP controller obtains the <code class="docutils literal notranslate"><span class="pre">entropy</span></code> signal from CSRNG (refer to CSRNG in hw) and derives the transient key using the <strong>SRAM_DATA_KEY_SEED</strong> and <strong>PRESENT</strong> scrambling data path (as described in the OTP controller specification).</p></li>
+<li><p>The OTP controller returns a new transient key via the response channel (<code class="docutils literal notranslate"><span class="pre">sram_otp_key_o[*]</span></code>, <code class="docutils literal notranslate"><span class="pre">otbn_otp_key_o</span></code>), completing the req/ack handshake.</p></li>
+</ol>
+</li>
+<li><p>The key and nonce are available for use by the scrambling primitives in subsequent cycles. The waveform diagram illustrates this process.</p></li>
+<li><p>If key seeds are not configured in OTP, keys are derived from all-zero constants, and the <code class="docutils literal notranslate"><span class="pre">*.seed_valid</span></code> signal is set to 0 in the response. Note that this mechanism requires CSRNG and the entropy distribution network to be operational. If they are not, the key derivation request is blocked.</p></li>
+<li><p>The req/ack protocol operates on <code class="docutils literal notranslate"><span class="pre">clk_otp_i</span></code>. SRAM CTRL synchronizes the data through the req/ack handshake primitive <code class="docutils literal notranslate"><span class="pre">prim_sync_reqack.sv</span></code>.</p></li>
+</ul>
+<div align=center><p><img alt="alt text" src="../../_images/image-151.png" /></p>
+<div>
+<div align=left><div>    </section>
+<section id="global-and-local-upgrades">
+<h4>2.7.4.5.2 Global and Local Upgrades<a class="headerlink" href="#global-and-local-upgrades" title="Link to this heading"></a></h4>
+<p>This section explains the functionality of <code class="docutils literal notranslate"><span class="pre">lc_escalate_en_i</span></code>:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">lc_escalate_en_i</span></code> signal is responsible for initiating global and local upgrades. When this signal is asserted, it triggers the system to perform necessary actions to upgrade the SRAM Controller and its associated components. This includes updating the scrambling keys, resetting counters, and ensuring the integrity of bus transactions to prevent unauthorized access or errors during the upgrade process. Global upgrades affect the entire system, while local upgrades focus on specific components, ensuring a controlled and secure update mechanism.</p>
+</section>
+</section>
+</section>
+<section id="register">
+<h2>2.7.5 Register<a class="headerlink" href="#register" title="Link to this heading"></a></h2>
+<p>Detailed reading of
+<a class="reference external" href="https://opentitan.org/book/hw/ip/sram_ctrl/doc/registers.html">OpenTitan SRAM CTRL Register Configuration</a>,
+here is the basic description.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Name</th>
+<th style="text-align: center;">Offset</th>
+<th style="text-align: center;">Length</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">sram_ctrl.<strong>ALERT_TEST</strong></td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">Alert Test Register (1 bit for alert)</td>
+</tr>
+<tr>
+<td style="text-align: center;">sram_ctrl.<strong>STATUS</strong></td>
+<td style="text-align: center;">0x4</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">SRAM Status Register (6 states; 1-bit thermal)</td>
+</tr>
+<tr>
+<td style="text-align: center;">sram_ctrl.<strong>EXEC_REGWEN</strong></td>
+<td style="text-align: center;">0x8</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">Execution Enable Register Lock (EXEC's enable)</td>
+</tr>
+<tr>
+<td style="text-align: center;">sram_ctrl.<strong>EXEC</strong></td>
+<td style="text-align: center;">0xc</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">SRAM Execution Enable (4 bits, related to OTG function)</td>
+</tr>
+<tr>
+<td style="text-align: center;">sram_ctrl.<strong>CTRL_REGWEN</strong></td>
+<td style="text-align: center;">0x10</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">Control Register Lock (CTRL's enable)</td>
+</tr>
+<tr>
+<td style="text-align: center;">sram_ctrl.<strong>CTRL</strong></td>
+<td style="text-align: center;">0x14</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">SRAM Control Register (2 bits, related to OTG and LFSR control)</td>
+</tr>
+<tr>
+<td style="text-align: center;">sram_ctrl.<strong>SCR_KEY_ROTATED</strong></td>
+<td style="text-align: center;">0x18</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">Clearable SRAM Key Request Status (4 bits, related to OTG function)</td>
+</tr>
+</tbody>
+</table></section>
+<section id="external-interface-function">
+<h2>2.7.6 External Interface Function<a class="headerlink" href="#external-interface-function" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">dif_sram_ctrl.h</span></code></p>
+</section>
+<section id="checklist">
+<h2>2.7.7 Checklist<a class="headerlink" href="#checklist" title="Link to this heading"></a></h2>
+<p>Summary and design plan of the article.
+To understand the specific functional implementation of SRAM CTRL, it is necessary to read the <strong>LFSR (CSRs)</strong> and <strong>OTP Controller</strong> sections.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qspi.html" class="btn btn-neutral float-left" title="2.6 QSPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../fpga.html" class="btn btn-neutral float-right" title="3. Prototype Verificaton On FPGA" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

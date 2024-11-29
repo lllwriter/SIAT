@@ -1,0 +1,1214 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.4 SPI &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.5 JTAG" href="jtag.html" />
+    <link rel="prev" title="2.3 UART" href="uart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">1. START</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Hardware</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Overview.html">2.1 OVERVIEW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpio.html">2.2 GPIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uart.html">2.3 UART</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.4 SPI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spi-technical-specification">2.4.1 SPI Technical Specification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#design-verification">2.4.2 Design Verification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#testplan">2.4.2.1 Testplan</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hardware-interface">2.4.3 Hardware Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#registers">2.4.4 Registers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#controller-memory-map-configuration">Controller Memory Map Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#register-functionality-overview">Register Functionality Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checklist">2.3.5  Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jtag.html">2.5 JTAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qspi.html">2.6 QSPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sram.html">2.7 SRAM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../fpga.html">3. Prototype Verificaton On FPGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend.html">4 Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device.html">5. DEVICE(SD)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">2. Hardware</a></li>
+      <li class="breadcrumb-item active">2.4 SPI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/pages/hardware/spi.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="spi">
+<h1>2.4 SPI<a class="headerlink" href="#spi" title="Link to this heading"></a></h1>
+<section id="spi-technical-specification">
+<h2>2.4.1 SPI Technical Specification<a class="headerlink" href="#spi-technical-specification" title="Link to this heading"></a></h2>
+<p><img alt="alt text" src="../../_images/image-251.png" /></p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>The SPI controller supports single-, dual-, and quad-channel protocols in host-only mode. The baseline controller provides a FIFO-based interface for executing programmed input/output operations. Software initiates transfers by queuing frames into the transmit FIFO; upon completion, the slave responses are placed in the receive FIFO.</p>
+<p>Additionally, the dedicated SPI0 controller implements an SPI flash read sequencer, which exposes the contents of an external SPI flash as a read-only/execute memory-mapped device. Given an input clock rate below 100 MHz and assuming the external SPI flash device supports the common Winbond/Numonyx serial read (0x03) command, the SPI0 controller resets to a state that allows memory-mapped reads. To enhance performance, consecutive accesses are automatically merged into a single long read command.</p>
+<p>The fctrl register governs the toggling between memory-mapped and programmed I/O modes. In programmed I/O mode, memory-mapped reads do not access the external SPI flash device and instead return 0 immediately. Hardware interlocks ensure that the current transfer completes before mode transitions and control register updates take effect.</p>
+</section>
+</section>
+<section id="design-verification">
+<h2>2.4.2 Design Verification<a class="headerlink" href="#design-verification" title="Link to this heading"></a></h2>
+<p><strong>Goals</strong></p>
+<p>Verify SPI IP features by running dynamic simulations with a SV/UVM based testbench</p>
+<p><strong>Design features</strong></p>
+<p>For detailed information on SPI design features, please see the <strong>SPI Technical Specification</strong>.</p>
+<p><strong>Testbench architecture</strong></p>
+<p>Top level testbench is located at /trunk/hw/d2dv100_top/dv/dut_MEISHAV100_TOP_wrapper.sv. It instantiates the TOP DUT module /trunk/hw/d2dv100_top/rtl/top/MEISHAV100_TOP.sv. In addition, it instantiates the following interfaces, connects them to the DUT and sets their handle into <code class="docutils literal notranslate"><span class="pre">uvm_config_db</span></code>:</p>
+<ul class="simple">
+<li><p>Clock and reset interface</p></li>
+<li><p>Tilelink host interface</p></li>
+<li><p>SPI IOs</p></li>
+</ul>
+<p><strong>Global types &amp; methods</strong></p>
+<p>All common types and methods defined at the package level can be found in <code class="docutils literal notranslate"><span class="pre">spi_env_pkg</span></code></p>
+<p><strong>TL_agent</strong></p>
+<p>SPI Device instantiates (already handled in CIP base env) tl_agent which provides the ability to drive and independently monitor random traffic via TL host interface into SPI Device.</p>
+<p><strong>SPI_agent</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">spi</span> <span class="pre">agent</span></code> is used to drive and monitor SPI items.</p>
+<section id="testplan">
+<h3>2.4.2.1 Testplan<a class="headerlink" href="#testplan" title="Link to this heading"></a></h3>
+<p>This validation environment encompasses a substantial amount of supplementary code; however, the parent classes may introduce anomalies or superfluous functionalities. Consequently, it is permissible to directly alter the inherited parent class to the corresponding UVM base class, as necessitated</p>
+<section id="develop-an-agent">
+<h4>2.4.2.1.1 Develop an agent<a class="headerlink" href="#develop-an-agent" title="Link to this heading"></a></h4>
+<p>Within this development environment, the SPI operates as a slave_agent driven by the CPU. Consequently, the SPI_agent comprises a single driver responsible for capturing signals emitted by the SPI ports during the testing process.</p>
+<section id="spi-agent-cfg-sv">
+<h5>spi_agent_cfg.sv<a class="headerlink" href="#spi-agent-cfg-sv" title="Link to this heading"></a></h5>
+<p>This file defines properties such as the SPI polarity, phase, endianness, and declares an SPI interface for the monitor to collect data. The core function, <code class="docutils literal notranslate"><span class="pre">wait_sck_edge</span></code>, is pivotal as it determines the sampling timing based on the SPI’s polarity and phase.</p>
+</section>
+<section id="spi-agent-cov-sv">
+<h5>spi_agent_cov.sv<a class="headerlink" href="#spi-agent-cov-sv" title="Link to this heading"></a></h5>
+<p>The coverage-related file is currently empty.</p>
+</section>
+<section id="spi-agent-pkg-sv">
+<h5>spi_agent_pkg.sv<a class="headerlink" href="#spi-agent-pkg-sv" title="Link to this heading"></a></h5>
+<p>This file imports the libraries and modules required by the <code class="docutils literal notranslate"><span class="pre">SPI</span> <span class="pre">agent</span></code> and also defines various enumerated variables, such as csmode and transfer modes (single, dual, quad), enhancing convenience for usage.</p>
+</section>
+<section id="spi-agent-sv">
+<h5>spi_agent.sv<a class="headerlink" href="#spi-agent-sv" title="Link to this heading"></a></h5>
+<p>This defines an <code class="docutils literal notranslate"><span class="pre">spi_monitor</span></code> and <code class="docutils literal notranslate"><span class="pre">spi_config</span></code>, where the configured spi_if from config_db is passed to <code class="docutils literal notranslate"><span class="pre">spi_cfg</span></code>.<code class="docutils literal notranslate"><span class="pre">spi_if</span></code>. Additionally, spi_cfg is set in the database.</p>
+</section>
+<section id="spi-device-driver-sv">
+<h5>spi_device_driver.sv<a class="headerlink" href="#spi-device-driver-sv" title="Link to this heading"></a></h5>
+<p>The slave_spi driver currently remains unused.</p>
+</section>
+<section id="spi-driver-sv">
+<h5>spi_driver.sv<a class="headerlink" href="#spi-driver-sv" title="Link to this heading"></a></h5>
+<p>The base class for the spi_driver, from which both the master_spi and slave_spi drivers inherit. It defines two virtual tasks: reset and drive. Subclasses can extend it with additional tasks if neede</p>
+</section>
+<section id="spi-host-driver-sv">
+<h5>spi_host_driver.sv<a class="headerlink" href="#spi-host-driver-sv" title="Link to this heading"></a></h5>
+<p>The master_spi driver is currently inactive.</p>
+</section>
+<section id="spi-if-sv">
+<h5>spi_if.sv<a class="headerlink" href="#spi-if-sv" title="Link to this heading"></a></h5>
+<p>The SPI interface, designed to supply data to the monitor, encompasses the four fundamental SPI signals along with additional debug signals.</p>
+</section>
+<section id="spi-item-sv">
+<h5>spi_item.sv<a class="headerlink" href="#spi-item-sv" title="Link to this heading"></a></h5>
+<p>The data actually transmitted by the spi_sequence entails a queue for storing 8-bit data and the transfer type (either write or read).</p>
+</section>
+<section id="spi-monitor-sv">
+<h5>spi_monitor.sv<a class="headerlink" href="#spi-monitor-sv" title="Link to this heading"></a></h5>
+<p>The primary components of this file are the definition of two <code class="docutils literal notranslate"><span class="pre">spi_items</span></code> and two <code class="docutils literal notranslate"><span class="pre">uvm_analysis_ports</span></code>, which collect SPI transmission data and facilitate communication with the scoreboard. The core task, collect_trans, is responsible for gathering SPI transmission data. Given that the SPI chip select (CS) signal is active low, collection commences upon detecting a low state on CS. The process involves waiting for a rising edge (conditional on clock polarity and phase) before sampling the MISO signal for validity and storing it in a predefined array (considering endianness). Additionally, the spi_monitor incorporates rudimentary validation by initializing an incremental variable, exp, and comparing it to each collected 8-bit segment to verify data accuracy. Finally, the received data is transmitted to the host_analysis_port for extraction by the scoreboard.</p>
+</section>
+<section id="spi-sckmode-c-sv">
+<h5>spi_sckmode_c.sv<a class="headerlink" href="#spi-sckmode-c-sv" title="Link to this heading"></a></h5>
+<p>It is intended to randomize values within the sckmode, but given the current SPI configuration, it is not feasible to write to the corresponding registers via the bus. Consequently, this file remains inactive for the time being.</p>
+</section>
+<section id="spi-sequencer-sv">
+<h5>spi_sequencer.sv<a class="headerlink" href="#spi-sequencer-sv" title="Link to this heading"></a></h5>
+<p>The sequencer, designated for transmitting SPI data, currently remains vacant.</p>
+</section>
+<section id="spi-base-agent-core">
+<h5>spi_base_agent.core<a class="headerlink" href="#spi-base-agent-core" title="Link to this heading"></a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">.core</span></code> file serves as a configuration management tool for projects in FuseSoC, allowing you to replicate existing configurations and modify their components as needed:</p>
+<ul class="simple">
+<li><p><strong>name</strong>: Set to “lowrisc:dv:XXX:0.1”, where XXX should be replaced with the corresponding name for your project. This name must align with any references to this configuration within other files.</p></li>
+<li><p><strong>depend</strong>: Specify dependencies on other configuration files here, such as an environment dependency on an agent.</p></li>
+<li><p><strong>files</strong>: This section lists all files included in the current configuration, encompassing all files from the referenced spi_agent. If file ‘a’ is included in file ‘b’, attribute {is_include_file: true} should be appended to file ‘a’.</p></li>
+</ul>
+<p>For additional details, consult the official FuseSoC documentation at:</p>
+<p><a class="reference external" href="https://fusesoc.readthedocs.io/en/stable/user/build_system/index.html">https://fusesoc.readthedocs.io/en/stable/user/build_system/index.html</a>.</p>
+</section>
+</section>
+<section id="develop-an-env">
+<h4>2.4.2.1.2 Develop an env<a class="headerlink" href="#develop-an-env" title="Link to this heading"></a></h4>
+<section id="spi-scoreboard-sv">
+<h5>spi_scoreboard.sv<a class="headerlink" href="#spi-scoreboard-sv" title="Link to this heading"></a></h5>
+<p>Four queues are defined to store the expected and actual write and read data. The expected data is sourced from the TL-agent, while the actual data is obtained from the SPI-agent. SPI data is retrieved via uvm_blocking_get_port, and a comparison is made between the expected and actual data. However, there are inherent issues with the current scoreboard, rendering it ineffective in the validation environment used.</p>
+</section>
+<section id="spi-env-sv">
+<h5>spi_env.sv<a class="headerlink" href="#spi-env-sv" title="Link to this heading"></a></h5>
+<p>The components include an spi_agent, an spi_agent_cfg, an spi_scoreboard, and a uvm_tlm_analysis_fifo which serves to connect the spi_scoreboard with the spi_monitor.</p>
+</section>
+<section id="spi-env-pkg-sv">
+<h5>spi_env_pkg.sv<a class="headerlink" href="#spi-env-pkg-sv" title="Link to this heading"></a></h5>
+<p>The necessary libraries and files for the spi_env are imported, and an enumeration variable, spi_host_intr_e, is defined (currently unused) to facilitate utilization</p>
+</section>
+<section id="spi-base-env-core">
+<h5>spi_base_env.core<a class="headerlink" href="#spi-base-env-core" title="Link to this heading"></a></h5>
+<p>The configuration file for the spi_env, designed to provide dependencies for the spi_test.</p>
+</section>
+</section>
+<section id="develop-rals">
+<h4>2.4.2.1.3 Develop rals<a class="headerlink" href="#develop-rals" title="Link to this heading"></a></h4>
+<p>please translate this passage into more professional English by changing sentence structure,grammactical structure,words,etc</p>
+</section>
+<section id="develop-rtls">
+<h4>2.4.2.1.4 Develop rtls<a class="headerlink" href="#develop-rtls" title="Link to this heading"></a></h4>
+<p>To validate SPI read operations, an SPI-slave device was integrated into our SOC, enabling data transmission from the SOC’s SPI interface to the SPI-slave. The objective was to verify whether the SPI-slave could accurately relay the correct values back.</p>
+<p>The RTL code for this purpose was sourced from a GitHub project (</p>
+<p><a class="reference external" href="https://github.com/SherifMohamed2602/SPI_Interface">https://github.com/SherifMohamed2602/SPI_Interface</a></p>
+<p>) authored by Sherif Mohamed. The project includes instructions for running tests, which were successfully validated through experimentation. According to the author’s implementation, the testing protocol involves sending 11-bit data segments. The first bit alters the SPI’s state (e.g., write data, read data, write address). The second and third bits indicate to the SPI-slave’s memory to store or transmit corresponding addresses or data. The remaining eight bits constitute the actual data (address or data) being written. This test case methodology was employed to conduct the SPI read validation.</p>
+</section>
+<section id="develop-seq-libs">
+<h4>2.4.2.1.5 Develop seq_libs<a class="headerlink" href="#develop-seq-libs" title="Link to this heading"></a></h4>
+<p>The base sequence for SPI, which is currently not utilized as the current environment employs the spi_item from the identical agent folder.</p>
+</section>
+<section id="develop-tests">
+<h4>2.4.2.1.6 Develop tests<a class="headerlink" href="#develop-tests" title="Link to this heading"></a></h4>
+<p>This test is adapted from the pre-existing tl-test within the reference environment.</p>
+<section id="spi-macros-svh">
+<h5>spi_macros.svh<a class="headerlink" href="#spi-macros-svh" title="Link to this heading"></a></h5>
+<p>The base address and offset definitions for SPI registers facilitate efficient usage.</p>
+</section>
+<section id="spi-test-sv">
+<h5>spi_test.sv<a class="headerlink" href="#spi-test-sv" title="Link to this heading"></a></h5>
+<p>The test was written with reference to the tlul_test.sv, primarily modifying the code within the main_phase. Additional components include the definition of an spi_if within spi_base_test_cfg and an spi_env within spi_base_test.</p>
+<p>Within the main_phase, data is sent to SPI registers via the tl-agent to configure them (as an alternative to the ral method). Data is then transmitted to the spi_txfifo, initiating automatic forwarding by the SPI. Accuracy of the mosi port’s output is verified through monitoring. Given that the txfifo can only transmit one byte of data at a time, test data ranging from 0x00 to 0xff is utilized to ensure comprehensive coverage.</p>
+<p>The aforementioned process constitutes the write validation, which involves sending data to the spi_txfifo via the tl-agent and verifying its subsequent transmission. For read validation, an additional slave device is connected to the SOC. Notably, the exposed SD-related interfaces at the topmost level of the SOC correspond to the four standard SPI interfaces, facilitating the connection with the spi-slave.</p>
+<p>For read validation, we refer to the original test cases within the spi-slave, which involve sending 11 bits per transaction with varying commands (occupying the first three bits). Due to our SPI’s limitation of transmitting one byte at a time, two data transmissions are required to complete a test. Specifically, data transmitted as A[7:0] and B[7:0] includes command signals in A[6:4], while the actual data consists of {A[3:0], B[7:4]}. Examination of the spi-slave’s RTL or TB files reveals support for four commands, with the “read data” operation requiring a third data transmission (of any value) to ensure complete data return via miso. Additionally, each test involves configuring the csmode register to hold, sending data twice to txfifo, and then disabling csmode. Between tests, an additional data transmission to txfifo is necessary to drive the spi-clk and reset certain values within the spi-slave for the next test.</p>
+<p>The current write tests cover various polarity, phase, and endianness scenarios using test data from 0x00 to 0xff, all yielding correct results.</p>
+</section>
+</section>
+</section>
+<section id="hardware-interface">
+<h3>2.4.3 Hardware Interface<a class="headerlink" href="#hardware-interface" title="Link to this heading"></a></h3>
+<p>Within the U500 platform, only a single SPI (SPI0) interface is presently available, specifically designated for connecting to an SD card. The top-level module delineates the following correspondence between the SPI interface signals and the SD card signals:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">SPI Signal</th>
+<th style="text-align: center;">Top-level SD Card Signal</th>
+<th style="text-align: center;">I/O</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">SCK</td>
+<td style="text-align: center;">sdio_sdio_clk</td>
+<td style="text-align: center;">output</td>
+</tr>
+<tr>
+<td style="text-align: center;">MOSI</td>
+<td style="text-align: center;">sdio_sdio_cmd</td>
+<td style="text-align: center;">output</td>
+</tr>
+<tr>
+<td style="text-align: center;">MISO</td>
+<td style="text-align: center;">sdio_sdio_dat_0</td>
+<td style="text-align: center;">input</td>
+</tr>
+<tr>
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">sdio_sdio_dat_3</td>
+<td style="text-align: center;">output</td>
+</tr>
+</tbody>
+</table><section id="detailed-explanation">
+<h4>Detailed Explanation:<a class="headerlink" href="#detailed-explanation" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>SCK (Serial Clock)</strong>: The SPI clock signal, utilized for synchronizing data transmission, corresponds to the <code class="docutils literal notranslate"><span class="pre">sdio_sdio_clk</span></code> signal at the top-level module and is an output signal.</p></li>
+<li><p><strong>MOSI (Master Out Slave In)</strong>: The signal for transmitting data from the master device to the slave device. In the context of SD card communication, this represents the master device (e.g., microprocessor) transmitting commands or data to the SD card. It maps to the <code class="docutils literal notranslate"><span class="pre">sdio_sdio_cmd</span></code> signal at the top-level module and is an output signal.</p></li>
+<li><p><strong>MISO (Master In Slave Out)</strong>: The signal for transmitting data from the slave device to the master device. In the context of SD card communication, this represents the SD card returning data or responses to the master device. It maps to the <code class="docutils literal notranslate"><span class="pre">sdio_sdio_dat_0</span></code> signal at the top-level module and is an input signal.</p></li>
+<li><p><strong>CS (Chip Select)</strong>: The signal used to select a specific slave device (SD card) for communication. It maps to the <code class="docutils literal notranslate"><span class="pre">sdio_sdio_dat_3</span></code> signal at the top-level module and is an output signal.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="registers">
+<h2>2.4.4 Registers<a class="headerlink" href="#registers" title="Link to this heading"></a></h2>
+<section id="controller-memory-map-configuration">
+<h3>Controller Memory Map Configuration<a class="headerlink" href="#controller-memory-map-configuration" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Offset</th>
+<th style="text-align: center;">Name</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x00</td>
+<td style="text-align: center;">sckdiv</td>
+<td style="text-align: center;">Serial clock divisor</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x04</td>
+<td style="text-align: center;">sckmode</td>
+<td style="text-align: center;">Serial clock mode</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x10</td>
+<td style="text-align: center;">csid</td>
+<td style="text-align: center;">Chip select ID</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x14</td>
+<td style="text-align: center;">csdef</td>
+<td style="text-align: center;">Chip select default</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x18</td>
+<td style="text-align: center;">csmode</td>
+<td style="text-align: center;">Chip select mode</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x28</td>
+<td style="text-align: center;">delay0</td>
+<td style="text-align: center;">Delay control 0</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x2c</td>
+<td style="text-align: center;">delay1</td>
+<td style="text-align: center;">Delay control 1</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x38</td>
+<td style="text-align: center;">extradel</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x3c</td>
+<td style="text-align: center;">sampledel</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x40</td>
+<td style="text-align: center;">fmt</td>
+<td style="text-align: center;">Frame format</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x48</td>
+<td style="text-align: center;">txfifo</td>
+<td style="text-align: center;">Tx FIFO data</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x4c</td>
+<td style="text-align: center;">rxfifo</td>
+<td style="text-align: center;">Rx FIFO data</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x50</td>
+<td style="text-align: center;">txmark</td>
+<td style="text-align: center;">Tx FIFO watermark</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x54</td>
+<td style="text-align: center;">rxmark</td>
+<td style="text-align: center;">Rx FIFO watermark</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x60</td>
+<td style="text-align: center;">fctrl</td>
+<td style="text-align: center;">SPI flash interface control</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x64</td>
+<td style="text-align: center;">ffmt</td>
+<td style="text-align: center;">SPI flash instruction format</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x70</td>
+<td style="text-align: center;">ie</td>
+<td style="text-align: center;">SPI interrupt enable</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x74</td>
+<td style="text-align: center;">ip</td>
+<td style="text-align: center;">SPI interrupt pending</td>
+</tr>
+</tbody>
+</table></section>
+<section id="register-functionality-overview">
+<h3>Register Functionality Overview<a class="headerlink" href="#register-functionality-overview" title="Link to this heading"></a></h3>
+<section id="sckdiv">
+<h4>SckDiv<a class="headerlink" href="#sckdiv" title="Link to this heading"></a></h4>
+<p>The sckdiv register specifies the divisor used to generate the serial clock (SCK). The relationship between the input clock and SCK is defined by the following formula:
+$$f_{sck}=\frac{f_{in}}{2(div+1)}$$</p>
+<p>The input clock is the bus clock tlclk. The div field is reset to the value 0x3.</p>
+<p>Alternatively, for a more detailed context:</p>
+<p>The input clock is synchronized with the bus clock, denoted as tlclk. The div field within the sckdiv register, which governs the division factor for SCK generation, is initialized to a default value of 0x3 upon reset.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[11:0]</td>
+<td style="text-align: center;">div</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x3</td>
+<td style="text-align: center;">Divisor or serial clock</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:12]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table></section>
+<section id="seral-clock-mode-register-sckmode">
+<h4>Seral Clock Mode Register (sckmode)<a class="headerlink" href="#seral-clock-mode-register-sckmode" title="Link to this heading"></a></h4>
+<p>The sckmode register dictates the polarity and phase attributes of the serial clock. Upon reset, the sckmode register is initialized to a default value of 0.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">pha</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Serial clock phase</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">pol</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Serial clock polarity</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:2]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table><p>Serial Clock Polarity:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Value</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">The SCK signal remains at a logical level of 0 at idle</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">The SCK signal remains at a logical level of 1</td>
+</tr>
+<tr>
+<td style="text-align: center;">at idle</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table><p>Serial Clock Phase：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Value</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Data is sampled on the rising edge of SCK (leading edge) and shifted out on the falling edge of SCK (trailing edge)</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Data is sampled on the falling edge of SCK (leading edge) and shifted out on the rising edge of SCK (trailing edge)</td>
+</tr>
+</tbody>
+</table></section>
+<section id="chip-select-id-register-csid">
+<h4>Chip Select ID Register (csid)<a class="headerlink" href="#chip-select-id-register-csid" title="Link to this heading"></a></h4>
+<p>The csid register encodes the index of the CS pin to be toggled by the hardware chip select control. The reset value for this register is 0.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[31:0]</td>
+<td style="text-align: center;">csid</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0000_0000</td>
+<td style="text-align: center;">Chip Select ID</td>
+</tr>
+</tbody>
+</table></section>
+<section id="chip-select-default-register-csdef">
+<h4>Chip Select Default Register (csdef)<a class="headerlink" href="#chip-select-default-register-csdef" title="Link to this heading"></a></h4>
+<p>The csdef register specifies the idle state (polarity) of the CS pins. For all implemented CS pins, the reset value is set to high.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[31:0]</td>
+<td style="text-align: center;">csdef</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0000_0001</td>
+<td style="text-align: center;">Chip Select Default Value</td>
+</tr>
+</tbody>
+</table></section>
+<section id="chip-select-mode-register-csmode">
+<h4>Chip Select Mode Register (csmode)<a class="headerlink" href="#chip-select-mode-register-csmode" title="Link to this heading"></a></h4>
+<p>The csmode register defines the behavior of the hardware chip select, as detailed in the table below. The reset value is 0 (AUTO). In HOLD mode, the CS pin remains deasserted under the following conditions:</p>
+<ul class="simple">
+<li><p>A different value is written to either csmode or csid.</p></li>
+<li><p>A write to csdef results in a change of state for the selected pin.</p></li>
+<li><p>Direct-mapped flash mode is enabled.</p></li>
+</ul>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[1:0]</td>
+<td style="text-align: center;">mode</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Chip Select Mode</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:2]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Value</th>
+<th style="text-align: center;">Name</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">AUTO</td>
+<td style="text-align: center;">Toggle the CS signal at the beginning/end of each frame</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">HOLD</td>
+<td style="text-align: center;">Keep the CS signal asserted continuously after the initial frame</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">OFF</td>
+<td style="text-align: center;">Disable hardware control over the CS signal</td>
+</tr>
+</tbody>
+</table></section>
+<section id="delay-control-registers-delay0-and-delay1">
+<h4>Delay Control Registers (delay0 and delay1)<a class="headerlink" href="#delay-control-registers-delay0-and-delay1" title="Link to this heading"></a></h4>
+<p>The delay0 and delay1 registers allow the insertion of arbitrary delays in terms of SCK cycles.</p>
+<ul class="simple">
+<li><p>The cssck field specifies the delay between setting CS and the first rising edge of SCK. An additional half-cycle delay is implied when sckmode.pha = 0. The reset value is 0x01.</p></li>
+<li><p>The sckcs field specifies the delay between the last falling edge of SCK and the deassertion of CS. An additional half-cycle delay is implied when sckmode.pha = 1. The reset value is 0x01.</p></li>
+<li><p>The intercs field specifies the minimum CS idle time between deassertion and reassertion. The reset value is 0x01.</p></li>
+<li><p>The interxfr field specifies the delay between two consecutive frames without deasserting CS. This is applicable only when sckmode is in HOLD or OFF. The reset value is 0x00.</p></li>
+</ul>
+<p>delay0：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[7:0]</td>
+<td style="text-align: center;">cssck</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x01</td>
+<td style="text-align: center;">CS to SCK Delay</td>
+</tr>
+<tr>
+<td style="text-align: center;">[15:8]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">[23:16]</td>
+<td style="text-align: center;">sckcs</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x01</td>
+<td style="text-align: center;">SCK to CS Delay</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:24]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table><p>delya1：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[7:0]</td>
+<td style="text-align: center;">intercs</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x01</td>
+<td style="text-align: center;">Minimum CS inactive time</td>
+</tr>
+<tr>
+<td style="text-align: center;">[15:8]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">[23:16]</td>
+<td style="text-align: center;">interxfr</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x00</td>
+<td style="text-align: center;">Maximum interframe delay</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:24]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table></section>
+<section id="frame-format-register-fmt">
+<h4>Frame Format Register (fmt)<a class="headerlink" href="#frame-format-register-fmt" title="Link to this heading"></a></h4>
+<p>The fmt register defines the frame format for transfers initiated via the Programmed I/O (FIFO) interface. The following table describes the proto, endian, and dir fields, which represent the protocol, endianness, and direction, respectively.</p>
+<ul class="simple">
+<li><p>The len field defines the number of bits per frame, with a permissible range from 0 to 8, inclusive.</p></li>
+<li><p>For SPI0, the reset value of the fmt register is 0x0008 0008, which corresponds to proto = single, dir = Tx, endian = MSB, and len = 8.</p></li>
+<li><p>For SPI1 and SPI2, the reset value of the fmt register is 0x0008 0000, which corresponds to proto = single, dir = Rx, endian = MSB, and len = 8.</p></li>
+</ul>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Fidle Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[1:0]</td>
+<td style="text-align: center;">proto</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">SPI Protocol</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">endian</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">SPI endinanness</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">dir</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x1</td>
+<td style="text-align: center;">SPI I/O Direction</td>
+</tr>
+<tr>
+<td style="text-align: center;">[15:4]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">[19:16]</td>
+<td style="text-align: center;">len</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x8</td>
+<td style="text-align: center;">Number of bits per frame</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:20]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table><p>SPI Protocol：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Value</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Data Pins</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Single</td>
+<td style="text-align: center;">DQ0(MOSI), DQ1(MISO)</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Dual</td>
+<td style="text-align: center;">DQ0, DQ1</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">Quad</td>
+<td style="text-align: center;">DQ0, DQ1, DQ2, DQ3</td>
+</tr>
+</tbody>
+</table><p>SPI Endianness：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Value</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Transmit most-significant bit (MSB) first</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Transmit least-significant bit (LSB) first</td>
+</tr>
+</tbody>
+</table><p>SPI I/O Direction：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Value</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Rx: In dual and quad protocols, the DQ pins are tri-stated. In the single protocol, the DQ0 pin is driven by the transmit data as usual.</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Tx: Receive data is not stored in the receive FIFO.</td>
+</tr>
+</tbody>
+</table></section>
+<section id="transmit-data-register-txdata">
+<h4>Transmit Data Register (txdata)<a class="headerlink" href="#transmit-data-register-txdata" title="Link to this heading"></a></h4>
+<p>Writing to the txdata register loads the transmit FIFO with the value in the data field.</p>
+<p>For the case where fmt.len &lt; 8, the value should be left-aligned when fmt.endian = MSB, and right-aligned when fmt.endian = LSB.</p>
+<p>The full flag is set when the transmit FIFO is ready to accept a new entry; when set, writes to txdata are ignored. On read, the data field returns 0x00.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[7:0]</td>
+<td style="text-align: center;">data</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x00</td>
+<td style="text-align: center;">Transmit Data</td>
+</tr>
+<tr>
+<td style="text-align: center;">[30:8]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">full</td>
+<td style="text-align: center;">RO</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">FIFO full flag</td>
+</tr>
+</tbody>
+</table></section>
+<section id="receive-data-register-rxdata">
+<h4>Receive Data Register (rxdata)<a class="headerlink" href="#receive-data-register-rxdata" title="Link to this heading"></a></h4>
+<p>Reading the rxdata register dequeues a frame from the receive FIFO.</p>
+<p>For the case where fmt.len &lt; 8, the value should be left-aligned when fmt.endian = MSB, and right-aligned when fmt.endian = LSB.</p>
+<p>The empty flag is set when the receive FIFO contains a new entry available for reading; when set, the data field does not contain a valid frame. Writes to rxdata are ignored.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[7:0]</td>
+<td style="text-align: center;">data</td>
+<td style="text-align: center;">RO</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Received Data</td>
+</tr>
+<tr>
+<td style="text-align: center;">[30:8]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RO</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">empty</td>
+<td style="text-align: center;">RO</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">FIFO empty flag</td>
+</tr>
+</tbody>
+</table></section>
+<section id="transmit-watermark-register-txmark">
+<h4>Transmit Watermark Register (txmark)<a class="headerlink" href="#transmit-watermark-register-txmark" title="Link to this heading"></a></h4>
+<p>The txmark register specifies the threshold that triggers the Tx FIFO watermark interrupt.
+For spi0, the reset value is 1; for spi1 and spi2, the reset value is 0.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[2:0]</td>
+<td style="text-align: center;">txmark</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x1</td>
+<td style="text-align: center;">Transmit watermark</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:3]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table></section>
+<section id="receive-watermark-register-rxmark">
+<h4>Receive Watermark Register (rxmark)<a class="headerlink" href="#receive-watermark-register-rxmark" title="Link to this heading"></a></h4>
+<p>The rxmark specifies the threshold that triggers the Rx FIFO watermark interrupt. The reset value is 0.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[2:0]</td>
+<td style="text-align: center;">rxmark</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Receive watermark</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:3]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table></section>
+<section id="spi-flash-interface-control-register-fctrl">
+<h4>SPI Flash Interface Control Register (fctrl)<a class="headerlink" href="#spi-flash-interface-control-register-fctrl" title="Link to this heading"></a></h4>
+<p>When the en bit of the fctrl register is set, the controller enters SPI Flash mode. Access to the memory-mapped region will cause the controller to automatically perform SPI Flash read sequences in hardware. The reset value is 0x1.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">en</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x1</td>
+<td style="text-align: center;">SPI Flash Mode Select</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:1]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table></section>
+<section id="spi-flash-instruction-format-register-ffmt">
+<h4>SPI Flash Instruction Format Register (ffmt)<a class="headerlink" href="#spi-flash-instruction-format-register-ffmt" title="Link to this heading"></a></h4>
+<p>The ffmt register defines the format of the SPI Flash read instruction issued by the controller when accessing the memory-mapped region when the controller is in SPI Flash mode.</p>
+<p>An instruction consists of a command byte, followed by a variable number of address bytes, dummy cycles (padding), and data bytes. The table below describes the function and reset value of each field.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">cmd_en</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x1</td>
+<td style="text-align: center;">Enable sending of command</td>
+</tr>
+<tr>
+<td style="text-align: center;">[3:1]</td>
+<td style="text-align: center;">addr_len</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x3</td>
+<td style="text-align: center;">Number of address bytes (0 to 4)</td>
+</tr>
+<tr>
+<td style="text-align: center;">[7:4]</td>
+<td style="text-align: center;">pad_cnt</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Number of dummy cycles</td>
+</tr>
+<tr>
+<td style="text-align: center;">[9:8]</td>
+<td style="text-align: center;">cmd_proto</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Protocol for transmitting command</td>
+</tr>
+<tr>
+<td style="text-align: center;">[11:10]</td>
+<td style="text-align: center;">addr_proto</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Protocol for transmitting address and padding</td>
+</tr>
+<tr>
+<td style="text-align: center;">[13:12]</td>
+<td style="text-align: center;">data_proto</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Protocol for receiving data bytes</td>
+</tr>
+<tr>
+<td style="text-align: center;">[15:14]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">[23:16]</td>
+<td style="text-align: center;">cmd_code</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x03</td>
+<td style="text-align: center;">Value of command byte</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:24]</td>
+<td style="text-align: center;">pad_code</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x00</td>
+<td style="text-align: center;">First 8 bits to transmit during dummy cycles</td>
+</tr>
+</tbody>
+</table></section>
+<section id="spi-interrupt-registers-ie-and-ip">
+<h4>SPI Interrupt Registers (ie and ip)<a class="headerlink" href="#spi-interrupt-registers-ie-and-ip" title="Link to this heading"></a></h4>
+<p>The ie register controls which SPI interrupts are enabled, while ip is a read-only register indicating pending interrupt conditions. The reset value of ie is zero.</p>
+<p>The txwm condition is triggered when the number of entries in the transmit FIFO is strictly less than the count specified by the txmark register. The pending bit is cleared when the number of enqueued entries is sufficiently large to exceed the watermark.</p>
+<p>The rxwm condition is triggered when the number of entries in the receive FIFO is strictly greater than the count specified by the rxmark register. The pending bit is cleared when the number of dequeued entries is sufficiently small to fall below the watermark.</p>
+<p>SPI Interrupt Enable Register (ie):</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">txwm</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Transmit watermark enable</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">rxwm</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Receive watermark enable</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:2]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table><p>SPI Watermark Interrupt Pending Register (ip):</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Bits</th>
+<th style="text-align: center;">Field Name</th>
+<th style="text-align: center;">Attr.</th>
+<th style="text-align: center;">Rst.</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">txwm</td>
+<td style="text-align: center;">RO</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Transmit watermark pending</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">rxwm</td>
+<td style="text-align: center;">RO</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">Receive watermark pending</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:2]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;">RW</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+</section>
+<section id="checklist">
+<h2>2.3.5  Checklist<a class="headerlink" href="#checklist" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="uart.html" class="btn btn-neutral float-left" title="2.3 UART" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jtag.html" class="btn btn-neutral float-right" title="2.5 JTAG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

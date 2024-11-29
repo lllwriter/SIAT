@@ -1,0 +1,541 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. Prototype Verificaton On FPGA &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4 Backend" href="backend.html" />
+    <link rel="prev" title="2.7 SRAM" href="hardware/sram.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="start.html">1. START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware/index.html">2. Hardware</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Prototype Verificaton On FPGA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fpga-development">3.1 FPGA Development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fpga-version">3.1.1 FPGA Version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chiplink">3.1.2 ChipLink</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fpga-side-block-design">3.1.3 FPGA-side Block Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ddr-read-and-write-test">3.1.4  DDR Read and Write Test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#preface">3.2 Preface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#notation-conventions">3.2.1 Notation Conventions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supported-tools-and-environment-set-up">3.2.2 Supported Tools and Environment Set Up</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sw-requirements">3.2.2.1 SW Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hw-requirements">3.2.2.2 HW Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">3.3 Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prototype-architecture">3.4 Prototype Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#top-level-architecture">3.4.1 Top Level Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clock-and-reset">3.4.2 Clock and Reset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#peripheral-architecture">3.4.3  Peripheral Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chiplink-module">3.4.4 Chiplink Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#mapping-of-main-memory">3.5 Mapping of Main Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-on-board-ddr3-memory">3.5.1 Using on-Board DDR3 Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#added-iram-module">3.5.2 Added IRAM Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sd-card-as-external-memory">3.5.3 SD Card as External Memory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#boot-mode-and-serial-terminal-settings">3.6 Boot mode and Serial terminal settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#start-up-process">3.6.1 Start-up Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#boot-mode-setup">3.6.2 Boot Mode Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#serial-terminal-setup">3.6.3 Serial Terminal Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#prototype-operation">3.7 Prototype Operation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reset-sequence">3.7.1 Reset Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#booting-os-from-an-sd-card">3.7.2 Booting OS from an SD Card</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-and-debugging">3.8 Simulation and Debugging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#software-simulation-from-vivado">3.8.1 Software Simulation from Vivado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inserting-debug-cores-for-logic-analyzer">3.8.2  Inserting Debug Cores for Logic Analyzer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#block-design">3.9  Block Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#about-networking">3.10 About Networking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-an-sd-bootable-image">3.11 Generating an SD-Bootable Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compile-the-rom-boot-program">3.12 Compile the ROM boot program</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">4 Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="device.html">5. DEVICE(SD)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">3. Prototype Verificaton On FPGA</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pages/fpga.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prototype-verificaton-on-fpga">
+<h1>3. Prototype Verificaton On FPGA<a class="headerlink" href="#prototype-verificaton-on-fpga" title="Link to this heading"></a></h1>
+<section id="fpga-development">
+<h2>3.1 FPGA Development<a class="headerlink" href="#fpga-development" title="Link to this heading"></a></h2>
+<section id="fpga-version">
+<h3>3.1.1 FPGA Version<a class="headerlink" href="#fpga-version" title="Link to this heading"></a></h3>
+<div align=center> <p><img alt="alt text" src="../_images/image-30.png" /></p>
+<div>  
+FPGA Version
+<div align=left><div>     </section>
+<section id="chiplink">
+<h3>3.1.2 ChipLink<a class="headerlink" href="#chiplink" title="Link to this heading"></a></h3>
+<p>Reference content from <a class="reference external" href="https://ysyx.oscc.cc/chip/board/official/boards/board-3/#fpga%E5%BC%80%E5%8F%91">YiShengYiChip Board FPGA Development</a>.</p>
+<p><strong>Note: When tested on VC707, Chiplink will prompt that timing requirements cannot be met when using 150Mhz and 200Mhz clocks. Actual testing shows that 150Mhz works, but 200Mhz does not!</strong></p>
+<p><strong>Note: The address range we use for Chiplink is 0x8000_0000~0xdfff_ffff. Read and write operations in other address ranges will cause Chiplink to report a slave_err.</strong></p>
+</section>
+<section id="fpga-side-block-design">
+<h3>3.1.3 FPGA-side Block Design<a class="headerlink" href="#fpga-side-block-design" title="Link to this heading"></a></h3>
+<div align=center><p><img alt="alt text" src="../_images/9a78c867-5af5-4ce5-9ad1-163e64f8f4a5.png" /></p>
+<div>    
+ FPGA-side Block Design<div align=left><div>   <ul>
+<li><p><strong>ZYNQ7 Processing System</strong> - PS-side processor system</p>
+<p>Requires the use of AXI_HP port</p>
+<p>Clock use the clock provided by the PS side, frequency as needed (Chiplink module’s clock cannot use 200Mhz or higher, unable to meet timing requirements!)</p>
+<p>Pin binding as needed, for example, the ZYBO 7020 development board can refer to the example</p>
+</li>
+<li><p><strong>AXI Interconnection</strong> - AXI intelligent interconnect module</p>
+<p>Here, AXI Interconnection has two functions</p>
+<ol class="simple">
+<li><p>Synchronize AXI signals across clock domains, Chiplink uses a clock that is inconsistent with the DDR interface</p></li>
+<li><p>Convert Chiplink’s AXI4 port signals to AXI3 port signals of the DDR interface</p></li>
+</ol>
+<p>The above operations are automatically completed by the AXI Interconnection module</p>
+</li>
+<li><p><strong>Processor System Reset</strong> - Synchronized reset module</p>
+<p>Regardless of whether the reset signal is a synchronous or asynchronous reset, the Block Design will give serious warnings, requiring modification of port attributes, or all use synchronous reset</p>
+<p>Therefore, Processor System Reset can be used to synchronize the reset signal to a certain clock, or a synchronized reset module can also be written (actually tested and works)</p>
+</li>
+<li><p><strong>Chiplink</strong> - Symmetric structure, has one master port and one slave port, two Chiplink are actually the same, only the masked ports are different when instantiated</p></li>
+</ul>
+</section>
+<section id="ddr-read-and-write-test">
+<h3>3.1.4  DDR Read and Write Test<a class="headerlink" href="#ddr-read-and-write-test" title="Link to this heading"></a></h3>
+<p>In FPGA development, you can first verify that DDR is working normally by performing a DDR read and write test experiment on the board</p>
+<p>In ZYNQ7020, you can complete the DDR read and write test by writing from the PL side and reading from the PS side using a serial port to print the content, specific pin assignment based on the actual situation binding</p>
+<div align=center><p><img alt="alt text" src="../_images/32975acb-c42e-4b00-b471-c04454f60737.png" /></p>
+<div>    
+DDR RW Design<div align=left><div>  <p>Add a state machine to send AXI signals to write DDR, Chiplink can be added or not, mainly to verify the operation of DDR.</p>
+<p>Verification content: Single write DDR, Burst write DDR, etc.</p>
+<div align=center>   <p><img alt="alt text" src="../_images/image-28.png" /></p>
+<div>  
+DDR Test
+<div align=left><div>   <p>Specific content and SDK side can refer to Altera’s video and project</p>
+<p><a class="reference external" href="https://www.bilibili.com/video/BV11j411f7Co?p=66&amp;vd_source=343c7823aae26537eb54d42a934d7c12">65_AXI4 DDR Read and Write Test Experiment (Part 1)_bilibili</a></p>
+</section>
+</section>
+<section id="preface">
+<h2>3.2 Preface<a class="headerlink" href="#preface" title="Link to this heading"></a></h2>
+<section id="notation-conventions">
+<h3>3.2.1 Notation Conventions<a class="headerlink" href="#notation-conventions" title="Link to this heading"></a></h3>
+<p>Text conventions used in the manual are specified in Table 1.</p>
+</section>
+<section id="supported-tools-and-environment-set-up">
+<h3>3.2.2 Supported Tools and Environment Set Up<a class="headerlink" href="#supported-tools-and-environment-set-up" title="Link to this heading"></a></h3>
+</section>
+<section id="sw-requirements">
+<h3>3.2.2.1 SW Requirements<a class="headerlink" href="#sw-requirements" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Operating environment
+The project needs to run in ubuntu22.04.</p></li>
+<li><p>Software dependence</p></li>
+</ul>
+<p>Firstly,following command below to git clone the project.<br /><code class="docutils literal notranslate"><span class="pre">$git</span> <span class="pre">clone</span> </code></p>
+<p>Then Update software dependencies before downloading them.</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">update</span></code><br /><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">upgrade</span></code><br />Then install the software dependencies.</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">autoconf</span> <span class="pre">automake</span> <span class="pre">autotools-dev</span> <span class="pre">curl</span> <span class="pre">libmpc-dev</span> <span class="pre">libmpfr-dev</span> <span class="pre">libgmp-dev</span> <span class="pre">libusb-1.0-0-dev</span> <span class="pre">gawk</span> <span class="pre">build-essential</span> <span class="pre">bison</span> <span class="pre">flex</span> <span class="pre">texinfo</span> <span class="pre">gperf</span> <span class="pre">libtool</span> <span class="pre">patchutils</span> <span class="pre">bc</span> <span class="pre">zlib1g-dev</span> <span class="pre">device-tree-compiler</span> <span class="pre">pkg-config</span> <span class="pre">libexpat-dev</span> <span class="pre">python</span> <span class="pre">wget</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">default-jre</span></code></p>
+<ul class="simple">
+<li><p>Install the tool chain<br />Running the project also requires installing the required RISC-V toolchain for compilation on the software, the RISC-V software toolchain must be installed locally, and the $(RISCV) environment variable must be set to point to the installed RISC-V toolchain. You can start from scratch to build tool chain or at the following link to download: https://www.sifive.com/products/tools/, if you have installed the RISC-V toolchain, please run the following command.<br />Note: Do not include /bin at the end of the string.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">export</span> <span class="pre">RISCV=/home/riscv/riscv64-elf-tc</span></code></p>
+<ul class="simple">
+<li><p>Install vivado2016.4<br />This project tested can only use vivado2016.4 version to build, other newer versions will have errors.</p></li>
+</ul>
+</section>
+<section id="hw-requirements">
+<h3>3.2.2.2 HW Requirements<a class="headerlink" href="#hw-requirements" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Supported development board</p></li>
+</ul>
+<p>Xilinx VC707(Virtex-7 XC7VX485T-2FFG1761C) is currently used in this project, and other types of FPGA boards have not been tested.</p>
+</section>
+</section>
+<section id="introduction">
+<h2>3.3 Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>The Soc built in this project was named MEISHAV100, which was built based on the freedom u500 of sifive Company, and the tilelink bus was replaced by the original pcie interface into the chiplink interface. iram, lsys, spi1 and qspi modules are added to make it have more debugging methods.</p>
+<p>In order to accelerate processor prototyping and provide a flexible framework for hardware/software interface validation, the FPGA prototype based on this MEISHAV100 is publicly released. This version of the open source files include Verilog source code, Vivado project, bitstream files and related documentation, so that the majority of researchers and college students can quickly learn to copy the project, and easily transplant to other models of FPGA development board.</p>
+<p>Due to the limitation of FPGA prototype verification, the current project only includes four Rocketchip processor cores, and the clock frequency of each module has certain limitations, which cannot achieve high frequency. See Figure 1 for details.</p>
+</section>
+<section id="prototype-architecture">
+<h2>3.4 Prototype Architecture<a class="headerlink" href="#prototype-architecture" title="Link to this heading"></a></h2>
+<section id="top-level-architecture">
+<h3>3.4.1 Top Level Architecture<a class="headerlink" href="#top-level-architecture" title="Link to this heading"></a></h3>
+<p>The overall architecture of MEISHAV100 is shown in Figure 1. In this project, MEISHAV100_TOP is the top layer of FPGA prototype verification project.</p>
+ <div align=right>   <p><img alt="alt text" src="../_images/image-29.png" /></p>
+<div>       <div align=center> 
+Design Architecture
+<div>     
+<div align=left> 
+<div> </section>
+<section id="clock-and-reset">
+<h3>3.4.2 Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading"></a></h3>
+<p>After the clock of the VC707 on-board differential clock source is converted into a single-ended clock through an IBUFDS primitive, xilinx’s PLL IP core module will generate 3 CLKS, which are respectively provided to rockecttile, chiplink module and other sub. The chip is expected to support RocketTile using 1GHz clock, CHIPLINK module using 250M clock, and other modules using 500M clock, but currently in the FPGA prototype verification project, except chiplink module using 150MHz clock, other unified use 50MHz clock. Otherwise, too high a frequency will lead to timing violations.</p>
+<p>The top layer ResetGEN module generates multiple resets, which are respectively provided to rockecttile, chiplink module and other subs. It is expected to support the reset signal generated after RocketTile uses 1G clock to beat, and the reset signal generated after CHIPLINK module uses 250M clock to beat. The reset signal generated after other modules use the 500M clock is supported. See Figure 2 for the reset timing diagram.</p>
+<div align=center>  <p><img alt="alt text" src="../_images/image-8.png" /><br />Clock and reset time sequence diagram</p>
+<div>
+<div align=left><div>   </section>
+<section id="peripheral-architecture">
+<h3>3.4.3  Peripheral Architecture<a class="headerlink" href="#peripheral-architecture" title="Link to this heading"></a></h3>
+<p>The peripherals of this project and the memory mapping of peripherals are shown below</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Base</th>
+<th style="text-align: center;">Size</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x0000_0000</td>
+<td style="text-align: center;">4K</td>
+<td style="text-align: center;">debug-controller</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x0000_3000</td>
+<td style="text-align: center;">4K</td>
+<td style="text-align: center;">error-device</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x0001_0000</td>
+<td style="text-align: center;">8K</td>
+<td style="text-align: center;">mask rom</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x0200_0000</td>
+<td style="text-align: center;">64k</td>
+<td style="text-align: center;">clink</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x0c00_0000</td>
+<td style="text-align: center;">4M</td>
+<td style="text-align: center;">plic</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5000_0000</td>
+<td style="text-align: center;">512K</td>
+<td style="text-align: center;">on chip sram</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5100_0000</td>
+<td style="text-align: center;">4K</td>
+<td style="text-align: center;">soc_lsys</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5200_0000</td>
+<td style="text-align: center;">4K</td>
+<td style="text-align: center;">spi_1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x6000_0000</td>
+<td style="text-align: center;">64M</td>
+<td style="text-align: center;">timeout</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x6400_0000</td>
+<td style="text-align: center;">4K</td>
+<td style="text-align: center;">serial</td>
+<td style="text-align: center;">narrow or sparse is not supported</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x6400_1000</td>
+<td style="text-align: center;">4K</td>
+<td style="text-align: center;">spi_0</td>
+<td style="text-align: center;">narrow or sparse is not supported</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x6400_2000</td>
+<td style="text-align: center;">4K</td>
+<td style="text-align: center;">gpio</td>
+<td style="text-align: center;">narrow or sparse is not supported</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x8000_0000</td>
+<td style="text-align: center;">1G</td>
+<td style="text-align: center;">DDR(CHIPLINK)</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0Xc000_0000</td>
+<td style="text-align: center;">1G</td>
+<td style="text-align: center;">timeout</td>
+<td style="text-align: center;">this space is not accessible and access will case the bus to crash</td>
+</tr>
+</tbody>
+</table></section>
+<section id="chiplink-module">
+<h3>3.4.4 Chiplink Module<a class="headerlink" href="#chiplink-module" title="Link to this heading"></a></h3>
+<p>ChipLink is a low-speed interchip bus communication protocol (between FPGA and SoC) proposed by SiFive, which is mainly used for shard transmission and recombination of AXI4 requests sent by SoC to reliably access hardware logic resources on FPGA. The ChipLink controller Verilog code on the FPGA core board was generated by Chisel and has been emulated on the VCS.</p>
+<p>Tilelink bus is mainly used in this project, so it is not necessary to convert AXI request into TileLink request. Instead, TileLink request can be directly converted into Chiplink request, and then SoC signal can be transmitted to FPGA through ChipLink transmission. The FPGA side needs to combine the TileLink request according to the ChipLink protocol, then convert the TileLink request back to the AXI request through the switching bridge, and finally exchange data with the MIG IP core on the FPGA through a series of switching Bridges, so as to realize the memory access operation of DDR on the FPGA.</p>
+<p>Tested on VC707, when Chiplink uses 150MHz and 200MHz clocks, Vivado software will prompt that it cannot meet the timing requirements. However, the actual measured result is that Chiplink can still work normally at 150MHz, but not at 200MHz.</p>
+<p>Note: The address range of the Chiplink we use is from <code class="docutils literal notranslate"><span class="pre">0x8000_0000</span></code> to <code class="docutils literal notranslate"><span class="pre">0xDfff_ffff</span></code>. Reading and writing Chiplinks in other address ranges will report a slave error.</p>
+</section>
+</section>
+<section id="mapping-of-main-memory">
+<h2>3.5 Mapping of Main Memory<a class="headerlink" href="#mapping-of-main-memory" title="Link to this heading"></a></h2>
+<section id="using-on-board-ddr3-memory">
+<h3>3.5.1 Using on-Board DDR3 Memory<a class="headerlink" href="#using-on-board-ddr3-memory" title="Link to this heading"></a></h3>
+<p>All currently supported development boards have DDR3 memory on it. This allows us easily implement processor main memory using Xilinx MIG 7 IP core.</p>
+</section>
+<section id="added-iram-module">
+<h3>3.5.2 Added IRAM Module<a class="headerlink" href="#added-iram-module" title="Link to this heading"></a></h3>
+<p>Compared with Freedom U500, this project has added an IRAM module that can quickly access on-chip resources, mainly used to store frequently accessed stacks, hot data, hot programs, etc. The IRAM module supports axi fix and incr operation types, burst 1-16 operation types, narrow operation and sparse operation, but does not support wrap operation. Meanwhile, wstrb needs to be consistent with size, and invalid bits need to be set to 0.</p>
+</section>
+<section id="sd-card-as-external-memory">
+<h3>3.5.3 SD Card as External Memory<a class="headerlink" href="#sd-card-as-external-memory" title="Link to this heading"></a></h3>
+<p>The SDHC Card should conform to SD specification 2.00 or later. This project is currently using Kingston’s 64GB SDHC memory card and SD adapter.</p>
+</section>
+</section>
+<section id="boot-mode-and-serial-terminal-settings">
+<h2>3.6 Boot mode and Serial terminal settings<a class="headerlink" href="#boot-mode-and-serial-terminal-settings" title="Link to this heading"></a></h2>
+<section id="start-up-process">
+<h3>3.6.1 Start-up Process<a class="headerlink" href="#start-up-process" title="Link to this heading"></a></h3>
+<p>The startup process of MEISHAV100 for this project is as follows:</p>
+<p><strong>Power on → Run the boot program in the maskROM → Load the Linux image file bbl.bin in the SD card to the DDR → Start the Linux system</strong></p>
+<p>The bootloader program stored in maskROM mainly completes loading and starting Linux image files from SD card to DDR storage, see Section 11 for details.</p>
+<p>The construction of Linux image files stored in an SD card is detailed in Section 10.</p>
+</section>
+<section id="boot-mode-setup">
+<h3>3.6.2 Boot Mode Setup<a class="headerlink" href="#boot-mode-setup" title="Link to this heading"></a></h3>
+<p>The project currently supports two startup modes, namely starting from SD card and starting from IRAM, by binding the top-level signal DEBUG_MODE_SEL to the on-board DIP switch. If the signal is 0, it starts from the SD card boot program, and if the signal is 1, it starts from IRAM.</p>
+</section>
+<section id="serial-terminal-setup">
+<h3>3.6.3 Serial Terminal Setup<a class="headerlink" href="#serial-terminal-setup" title="Link to this heading"></a></h3>
+<p>Open a terminal connection from the host to the MEISHAV100 VC707 FPGA development board using programs such as Minicom or Screen on Linux, or MobaXterm on Windows. Set the parameters as shown below.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Speed</td>
+<td style="text-align: center;">115200</td>
+</tr>
+<tr>
+<td style="text-align: center;">Parity</td>
+<td style="text-align: center;">None</td>
+</tr>
+<tr>
+<td style="text-align: center;">Data bits</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr>
+<td style="text-align: center;">Stop bits</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">Hardware Flow</td>
+<td style="text-align: center;">None</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="prototype-operation">
+<h2>3.7 Prototype Operation<a class="headerlink" href="#prototype-operation" title="Link to this heading"></a></h2>
+<section id="reset-sequence">
+<h3>3.7.1 Reset Sequence<a class="headerlink" href="#reset-sequence" title="Link to this heading"></a></h3>
+<p>After reset button is pushed, the signal is converted to an internal system reset with zero active level.</p>
+<p>If there is DDR controller,system reset is used for MIG XILINX IP core first.Until the initialization signal of the DDR controller is raised, then the DDR initialization is completed. The reset signal will only be used by the core.</p>
+</section>
+<section id="booting-os-from-an-sd-card">
+<h3>3.7.2 Booting OS from an SD Card<a class="headerlink" href="#booting-os-from-an-sd-card" title="Link to this heading"></a></h3>
+<p>Micro SD card allows to store both OpenBoot and OS image on it.Entering the OS with the sd card requires configured the clock frequency of uart and spi, and the default clock frequency of the processor is 50m. We have provided the pre-compiled linux systems that you can write into the sd card to run the linux system. Since you are unable to connect to the network on FPGA VC707, if you need to download the file on linux, you need to download the file into the linux system in the PC and write linux to the sd card.</p>
+</section>
+</section>
+<section id="simulation-and-debugging">
+<h2>3.8 Simulation and Debugging<a class="headerlink" href="#simulation-and-debugging" title="Link to this heading"></a></h2>
+<p>It is possible to run software simulation of MEISHAV100 prototype from Vivado.This feature is helpful for debugging reset sequence for your project and checking initial initialization sequence of a processor. This framework can be easily extend to incorporate custom tests targeting prototype specific modules, but we leave this discussion out of scope of this documentation.</p>
+<p>For debugging a processor on FPGA build-in hardware logic analyzer are used. It allows to check states of internal signals. Instructions on how to run software simulation from Vivado and how to add debug cores are below.</p>
+<section id="software-simulation-from-vivado">
+<h3>3.8.1 Software Simulation from Vivado<a class="headerlink" href="#software-simulation-from-vivado" title="Link to this heading"></a></h3>
+<p>You can run simulation of a prototype from Vivado to debug initial processor initialization and warm up. Simulation from Vivado allows you to you IP cores used for synthesis and ensure that you logic is interpreted in an expected way. Top level module for simulation if fpga_top.It generates clock are reset control signals for prototype.</p>
+<ul class="simple">
+<li><p>Write tb.v file, the project has provided relatively simple simulation files, but if you have higher simulation requirements, please add the files required for the simulation</p></li>
+<li><p>Click on Tools→click on settings→click on simulation →Compile Simulation Libraries</p></li>
+<li><p>Click on simulation→Select the emulator that you wish to use.The recommended simulator to use is Vivado, as it don’t need to compile simulation libraries and configure the co-simulation.</p></li>
+<li><p>In Flow Navigator on the left chose Simulation→Run behavioral Simulation. If you want to Post-Synthesis Functional Simulation, click on Functional Simulation.This requires first running the SYNTHESIS.</p></li>
+</ul>
+</section>
+<section id="inserting-debug-cores-for-logic-analyzer">
+<h3>3.8.2  Inserting Debug Cores for Logic Analyzer<a class="headerlink" href="#inserting-debug-cores-for-logic-analyzer" title="Link to this heading"></a></h3>
+<p>Build-in logic analyzer allow you to debug FPGA design while  it’s running. Next steps briefly describe how to add debug cores.</p>
+<ul class="simple">
+<li><p>Find signals in the design which you want to debug. To make sure that Vivado doesn’t optimize the logic corre sponding and you will be able to access a signal with debug cores, add ( MARK_DEBUG = “TRUE” ) before it. This  directive works with flip-flops and ports, but can not work well with wires. If you need, add additional logic to flip-flop  signals.</p></li>
+<li><p>Run Synthesis of a design</p></li>
+<li><p>After synthesis finished, expand Open Synthesized Design tab of Flow Navigator and click on Set Up Debug</p></li>
+<li><p>Follow the steps in the prompt to add signals for monitoring and to assign clock domain to them</p></li>
+<li><p>Save the design and finish FPGA flow down to bitstream  generation  when programming FPGA from Vivado, in addition to .bit files specify .ltx files with debug signals names</p></li>
+</ul>
+</section>
+</section>
+<section id="block-design">
+<h2>3.9  Block Design<a class="headerlink" href="#block-design" title="Link to this heading"></a></h2>
+<p>The prototype was validated with Xilinx’s vivado2016.4 and connected to the module with its ip core via vivado’s block design capabilities. The Block Design diagram is shown under:</p>
+<div align=center>   <p><img alt="alt text" src="../_images/image-11.png" /></p>
+<div>
+<div align=left><div>   <p>Block Design diagram<br />The configurations of some ip cores are described below</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Utility</span> <span class="pre">Buffer</span></code>: click on page0→C size:1,C BUF Type :IBUFDS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clk_wiz_0</span></code>: This is the clock for processor, set the input clock to 200m, the output clock clk_out 1, clk_out 2 to 50m, and set the high level reset</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clk_wiz_1</span></code>:This is the clock for the DDR controller, set the input clock 200m, the output clock clk_out1 is 200m, set the high level reset</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process</span> <span class="pre">System</span> <span class="pre">Reset</span></code>:For changing the asynchronous reset of the input to a synchronous reset</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Axi</span> <span class="pre">interconnect</span></code>:The number of Master and Slave was all set at 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Interface</span> <span class="pre">Generator</span></code>:This is the DDR controller module, used for controlling the DDR.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chiplink_master</span></code>:This is the rtl code we provide, and this module allows the core to control DDR through chiplink, which can reduce the pin interface compared to the axis bus.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DevKitWrapper</span></code>:This is the processor module, and some interfaces leave 0 unused because they are not used.</p></li>
+</ul>
+</section>
+<section id="about-networking">
+<h2>3.10 About Networking<a class="headerlink" href="#about-networking" title="Link to this heading"></a></h2>
+<p>In this project, the PCIe interface of the original freedom U500 was replaced with a chiplink module, so MEISHAV100 could not be connected to the network for the time being. However, some bus matrices could be connected to the external chiplink interface in the future, and the MAC IP core of the FPGA board could be used to transmit network data on the bus matrix.</p>
+</section>
+<section id="generating-an-sd-bootable-image">
+<h2>3.11 Generating an SD-Bootable Image<a class="headerlink" href="#generating-an-sd-bootable-image" title="Link to this heading"></a></h2>
+<p>The Linux image file of this project needs to be built in ubuntu16.04 environment. In the ubuntu16.04 environment, run the following command to install and compile the required software package:</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">-y</span> <span class="pre">build-essential</span> <span class="pre">git</span></code> <code class="docutils literal notranslate"><span class="pre">autotools-dev</span> <span class="pre">texinfo</span> <span class="pre">bison</span> <span class="pre">flex</span> </code>
+<code class="docutils literal notranslate"><span class="pre">libgmp-dev</span> <span class="pre">libmpfr-dev</span> <span class="pre">libmpc-dev</span> <span class="pre">gawk</span> <span class="pre">zlib1g-dev</span></code> <code class="docutils literal notranslate"><span class="pre">libssl-dev</span> <span class="pre">python</span> <span class="pre">unzip</span></code>
+<code class="docutils literal notranslate"><span class="pre">libncurses5-dev</span> <span class="pre">libglib2.0-dev</span> <span class="pre">libpixman-1-dev</span></code> <code class="docutils literal notranslate"><span class="pre">device-tree-compiler</span> <span class="pre">ftp</span></code><br /><code class="docutils literal notranslate"><span class="pre">$wget</span> <span class="pre">cpio</span> <span class="pre">bc</span> <span class="pre">gdisk</span> <span class="pre">e2fsprogs</span> <span class="pre">vim</span></code></p>
+<p>Then the overall sdk package this project uses the sdk package in the warehouse freedom-u-sdk. Clone the warehouse as follows:<br /><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">clone</span></code><br />https://github.com/mcd500/freedom-u-sdk.git<br /><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">checkout</span> </code><br />remotes/origin/linux_u500vc707devkit_config</p>
+<p>After cloning, we still need to clone its sub repositories, but due to the fact that the freedom-usdk repository is too old, many of its sub repository URLs have been changed, which poses a problem of not being able to download directly using the recursive download command of the sub repository.</p>
+<p>This project has updated the URLs of sub repositories that cannot be downloaded in the. gitmodules file. These updated. gitmodules files have been placed in the xx/xx/xx path. Please replace files in order, and execute the following command for each file replaced.</p>
+<p>The steps are as follows:</p>
+<p>1.Rename freedom-u-sdk.gitmodules to.gitmodules, and then replace the.gitmodules file in the freedom-u-sdk directory.</p>
+<p>2.Run the following commands in sequence:<br /><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">sync</span></code><br /><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">update</span> <span class="pre">--init</span> <span class="pre">--recursive</span></code><br />3..Switch the sub-repository to the version specified by freedom-u-sdk.<br />4.Rename qemu.gitmodules to.gitmodules and replace the.gitmodules file under freedom-u-sdk/riscv-qemu.<br />5.Run the following commands in sequence:<br /><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">sync</span></code><br /><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">update</span> <span class="pre">--init</span> <span class="pre">--recursive</span></code><br />6.Switch the sub-repository to the version specified by freedom-u-sdk.</p>
+<p>7.Rename toolchain.gitmodules to.gitmodules and replace the.gitmodules file under freedom-u-sdk/riscv-gnu-toolchain.</p>
+<p>8.Run the following commands in sequence:</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">sync</span></code>
+<code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">update</span> <span class="pre">--init</span> <span class="pre">--recursive</span></code></p>
+<p>9.Switch the sub-repository to the version specified by freedom-u-sdk.</p>
+<p>10.Rename toolchain-qemu.gitmodules to.gitmodules, and then replace the.gitmodules file under freedom-u-sdk/riscv-gnu-toolchain/riscv-qemu.</p>
+<p>11.Run the following commands in sequence:
+<code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">sync</span></code>
+<code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">git</span> <span class="pre">submodule</span> <span class="pre">update</span> <span class="pre">--init</span> <span class="pre">--recursive</span></code></p>
+<p>12.Switch the sub-repository to the version specified by freedom-u-sdk.</p>
+<p>13.Finally, the complete download of freedom-u-sdk was completed</p>
+<p>After completing the full clone of the repository, compile and execute the Linux image:</p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">make</span> <span class="pre">-j4</span> <span class="pre">BOARD=vc707devkit</span></code></p>
+<p>After the Linux image is compiled and generated, you can find the generated image file, that is, the bbl.bin file, under the work folder. Use the following command to burn the bbl.bin to the SD card.
+<code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">sudo</span> <span class="pre">dd</span>&#160; <span class="pre">if=bbl.bin</span> <span class="pre">of=/dev/sdb</span> <span class="pre">bs=512K</span> <span class="pre">count=1</span></code></p>
+<p>If you need to add peripherals yourself, modify the
+MEISHAV100.dts file, add the device tree of the corresponding device, and generate a dtb file to obtain driver support.</p>
+</section>
+<section id="compile-the-rom-boot-program">
+<h2>3.12 Compile the ROM boot program<a class="headerlink" href="#compile-the-rom-boot-program" title="Link to this heading"></a></h2>
+<p>The bootloader is sd.c located in the sdboot folder. Please use the gcc environment on the freedom library during compilation, otherwise an error will occur. The toolchain used is riscv64-unkown-elf-gcc. Please compile the toolchain provided by the freedom library and add the bin folder path of the toolchain to the system environment variable file.bashrc.</p>
+<p>After modifying the sd.c file, you can use the make command in the sdboot folder to compile the sdboot.Hex file. You need to add the path of the file to the maskROM.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hardware/sram.html" class="btn btn-neutral float-left" title="2.7 SRAM" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="backend.html" class="btn btn-neutral float-right" title="4 Backend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

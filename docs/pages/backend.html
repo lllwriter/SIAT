@@ -1,0 +1,864 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4 Backend &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. DEVICE(SD)" href="device.html" />
+    <link rel="prev" title="3. Prototype Verificaton On FPGA" href="fpga.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="start.html">1. START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware/index.html">2. Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fpga.html">3. Prototype Verificaton On FPGA</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4 Backend</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#memory">4.1 Memory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#theory-of-operation">4.1.1 Theory of Operation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#script-functions">4.1.1.1 Script Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#environmental-requirements">4.1.2 Environmental requirements</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#operating-system-version">Operating system version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#programming-language-version">Programming language version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#other-dependencies">Other dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-guidelines">4.1.3 Usage Guidelines</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fill-in-the-parameters">4.1.3.1 Fill in the parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-weights">4.1.3.2 Modify weights</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-scripts">4.1.3.3 Running Scripts</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#report-output">4.1.4 Report Output</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#txt-file">4.1.4.1 txt file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#verilog-files-and-library-files">4.1.4.2  Verilog files and library files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#i-o-cells-selections">4.2 I/O Cells Selections</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#i-o-cell-type-selection">4.2.1 I/O Cell Type Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selection-of-specific-i-o-cells">4.2.2 Selection of Specific I/O Cells</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-truth-table-for-i-o-selection">4.2.3 The truth table for I/O selection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="device.html">5. DEVICE(SD)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">4 Backend</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pages/backend.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="backend">
+<h1>4 Backend<a class="headerlink" href="#backend" title="Link to this heading"></a></h1>
+<section id="memory">
+<h2>4.1 Memory<a class="headerlink" href="#memory" title="Link to this heading"></a></h2>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>A shell script has been developed to automatically generate the required memory using the memory compiler tool by filling in the parameters according to the example table.</p>
+</section>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Developed a script that automatically generates the required memory using the memory compiler and captures the relevant parameter information to generate a report.</p></li>
+<li><p>IP using UMC 40nm</p></li>
+<li><p>Memory selection focuses on performance (read cycles) and area</p></li>
+</ul>
+</section>
+<section id="theory-of-operation">
+<h3>4.1.1 Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Link to this heading"></a></h3>
+<section id="script-functions">
+<h4>4.1.1.1 Script Functions<a class="headerlink" href="#script-functions" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Automated memory generation</p></li>
+<li><p>Captures memory parameters, analyses them and generates a report.</p></li>
+</ul>
+</section>
+</section>
+<section id="environmental-requirements">
+<h3>4.1.2 Environmental requirements<a class="headerlink" href="#environmental-requirements" title="Link to this heading"></a></h3>
+<section id="operating-system-version">
+<h4>Operating system version<a class="headerlink" href="#operating-system-version" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Linux: any modern Linux distribution, such as Ubuntu 20.04 LTS, Fedora 34, CentOS 7, etc.</p></li>
+<li><p>macOS: macOS 10.15 Catalina or later.</p></li>
+<li><p>Other Unix-like systems: Any Unix-like system that supports Bash or other compatible shells.</p></li>
+</ul>
+</section>
+<section id="programming-language-version">
+<h4>Programming language version<a class="headerlink" href="#programming-language-version" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Shell: Bash 4.0 or higher (the default version of Bash installed on most modern Linux distributions meets this requirement).</p></li>
+</ul>
+</section>
+<section id="other-dependencies">
+<h4>Other dependencies<a class="headerlink" href="#other-dependencies" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>A memory compiler with command line generation support.</p></li>
+</ul>
+</section>
+</section>
+<section id="usage-guidelines">
+<h3>4.1.3 Usage Guidelines<a class="headerlink" href="#usage-guidelines" title="Link to this heading"></a></h3>
+<section id="fill-in-the-parameters">
+<h4>4.1.3.1 Fill in the parameters<a class="headerlink" href="#fill-in-the-parameters" title="Link to this heading"></a></h4>
+<p>Enter the parameters in the input_data.csv file (in the following format).</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>proc</th>
+<th>type</th>
+<th>word</th>
+<th>bit</th>
+<th>byte</th>
+<th>ringtype</th>
+<th>cksr</th>
+<th>datasr</th>
+<th>load</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fsh0l</td>
+<td>1P</td>
+<td>64</td>
+<td>21</td>
+<td>4</td>
+<td>ringless</td>
+<td>0.4</td>
+<td>0.4</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>fsh0l</td>
+<td>1P</td>
+<td>8192</td>
+<td>8</td>
+<td>8</td>
+<td>ringless</td>
+<td>0.4</td>
+<td>0.4</td>
+<td>0.3</td>
+</tr>
+</tbody>
+</table></section>
+<section id="modify-weights">
+<h4>4.1.3.2 Modify weights<a class="headerlink" href="#modify-weights" title="Link to this heading"></a></h4>
+<p>Modify the time and area weights in the script file ‘run_allrun.sh’. This weight affects the scoring of the instance and is a key metric for picking the best memory. The time weight is ‘taa_weight’ and the area weight is ‘area_weight’.</p>
+</section>
+<section id="running-scripts">
+<h4>4.1.3.3 Running Scripts<a class="headerlink" href="#running-scripts" title="Link to this heading"></a></h4>
+<p>Run the ‘. /run_allrun.sh’ command to generate the script automatically.</p>
+</section>
+</section>
+<section id="report-output">
+<h3>4.1.4 Report Output<a class="headerlink" href="#report-output" title="Link to this heading"></a></h3>
+<section id="txt-file">
+<h4>4.1.4.1 txt file<a class="headerlink" href="#txt-file" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>The generated report is in txt format.</p></li>
+<li><p>The report contains the length, width, area and read cycles of the memory.</p></li>
+<li><p>The report also contains the overall rating of each instance and the best rated instance.</p></li>
+</ul>
+</section>
+<section id="verilog-files-and-library-files">
+<h4>4.1.4.2  Verilog files and library files<a class="headerlink" href="#verilog-files-and-library-files" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Automatically generates verilog and library files based on the best rated instances in the txt report.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="i-o-cells-selections">
+<h2>4.2 I/O Cells Selections<a class="headerlink" href="#i-o-cells-selections" title="Link to this heading"></a></h2>
+<p>MEISHAV100 adopts the UMC 40 nm I/O cell library. I/O cell types are selected based on specific functional characteristics and alignment with project requirements. A final section provides the pin usage of the selected I/O cells.</p>
+<section id="i-o-cell-type-selection">
+<h3>4.2.1 I/O Cell Type Selection<a class="headerlink" href="#i-o-cell-type-selection" title="Link to this heading"></a></h3>
+<p>I/O cells are categorized into the following types:</p>
+<ul class="simple">
+<li><p>analog I/O cells</p></li>
+<li><p>the crystal oscillator I/O cells</p></li>
+<li><p>tolerance generic POC I/O cells</p></li>
+<li><p>supports the speed requirement of the DDR2 SDRAM interface I/O cells</p></li>
+<li><p>supports SSTL-18,MDDR (LPDDR) and SSTL-2 modes I/O cells</p></li>
+<li><p>multi-voltage generic POC I/O buffer cells</p></li>
+</ul>
+<p>This project selects I/O cells that support DDR2 SDRAM interface speeds and multi-voltage general-purpose POC I/O buffer units.</p>
+</section>
+<section id="selection-of-specific-i-o-cells">
+<h3>4.2.2 Selection of Specific I/O Cells<a class="headerlink" href="#selection-of-specific-i-o-cells" title="Link to this heading"></a></h3>
+<p>The I/O cell types were determined based on pin frequency and functional requirements of the project. Pin frequencies range from 25 MHz to 300 MHz, with the need for differential clocking. Ultimately, three I/O cells were selected.</p>
+<p>The table below lists the I/O cells selected for this project.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">cell name</th>
+<th style="text-align: center;">function</th>
+<th style="text-align: center;">sizes</th>
+<th style="text-align: center;">voltage&amp;frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">ZTRNE4GS<br />(FOH0L_QRS25_TMVH33L18<br />_GENERIC_POC_IO CELL LIBRARY)</td>
+<td style="text-align: center;">Programmable 4.0 mA ~ 16 mA CMOS bidirectional buffer</td>
+<td style="text-align: center;">24.92μm x 169.4μm</td>
+<td style="text-align: center;">3.3V:150MHz<br />2.5V:100MHz<br />1.8V:80MHz</td>
+</tr>
+<tr>
+<td style="text-align: center;">WOSSTLECDLK<br />(FOH0L_QRS25_T18<br />_SSTL18A_IO CELL LIBRARY)</td>
+<td style="text-align: center;">Differential bidirectional buffer</td>
+<td style="text-align: center;">70 µm x 252.98 µm</td>
+<td style="text-align: center;">1.8v:supports DDR2 SRAM interface</td>
+</tr>
+<tr>
+<td style="text-align: center;">WRNE4GSLAX250<br />(FOH0L_QRS25_T18_GENERIC<br />_POC_IO_250 CELL LIBRARY SPECIFICATION)</td>
+<td style="text-align: center;">Programmable 4.0 mA ~ 16 mA CMOS bidirectional buffer</td>
+<td style="text-align: center;">29.96 μm x 169.4 μm</td>
+<td style="text-align: center;">1.8v:250Mhz</td>
+</tr>
+</tbody>
+</table></section>
+<section id="the-truth-table-for-i-o-selection">
+<h3>4.2.3 The truth table for I/O selection<a class="headerlink" href="#the-truth-table-for-i-o-selection" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>ZTRNE4GSLA(WRNE4GSLAX250)</strong></p></li>
+</ul>
+<p>The table below summarizes the function and specific values for each pin</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">E</th>
+<th style="text-align: center;">Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">disabled</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">enabled</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">IE</th>
+<th style="text-align: center;">Input</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">disabled</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">enabled</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">SR</th>
+<th style="text-align: center;">Slew rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">fast</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">slow</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">SMT</th>
+<th style="text-align: center;">input</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">normal</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">schmitt-trigger</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">PU</th>
+<th style="text-align: center;">PD</th>
+<th style="text-align: center;">Pull-up/Pull-down</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">None</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">75-kΩ pull-up</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">75-kΩ pull-down</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">keeper at IE=1</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">75-kΩ pull-down at IE=0</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">E8</th>
+<th style="text-align: center;">E4</th>
+<th style="text-align: center;">driving capability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">4*X</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">8*X</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">12*X</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">16*X</td>
+</tr>
+</tbody>
+</table><p>The following table represents the truth table for the selected I/O types</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">I</th>
+<th style="text-align: center;">E</th>
+<th style="text-align: center;">IO</th>
+<th style="text-align: center;">IE</th>
+<th style="text-align: center;">O</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Z</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">pull-down</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">pull-uo</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">none/keeper</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">IO</td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table><ul class="simple">
+<li><p><strong>WOSSTLECDLK</strong></p></li>
+</ul>
+<p>The table below summarizes the function and specific values for each pin</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">信号</th>
+<th style="text-align: center;">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">Non-inverting input signal of the driver</td>
+</tr>
+<tr>
+<td style="text-align: center;">E</td>
+<td style="text-align: center;">Output enable（‘1’enabled）</td>
+</tr>
+<tr>
+<td style="text-align: center;">IO</td>
+<td style="text-align: center;">Input pad of the receiver/Output pad of the driver</td>
+</tr>
+<tr>
+<td style="text-align: center;">IOB</td>
+<td style="text-align: center;">Inverted input pad of the receiver/Inverted output pad of the driver</td>
+</tr>
+<tr>
+<td style="text-align: center;">E3V</td>
+<td style="text-align: center;">VCCK power-down detection pin（‘1’enabled）</td>
+</tr>
+<tr>
+<td style="text-align: center;">SIO</td>
+<td style="text-align: center;">Single-ended mode/Differential mode selection pin（‘0’differential input mode/differential output mode）</td>
+</tr>
+<tr>
+<td style="text-align: center;">NLEG5~NLEG0</td>
+<td style="text-align: center;">NMOS driving compensation control pins（Typ.default setting：010100）</td>
+</tr>
+<tr>
+<td style="text-align: center;">PLEG5~PLEG0</td>
+<td style="text-align: center;">PMOS driving compensation control pins（Typ.default setting：010100）</td>
+</tr>
+<tr>
+<td style="text-align: center;">REF</td>
+<td style="text-align: center;">Reference voltage of the single-ended receiver</td>
+</tr>
+<tr>
+<td style="text-align: center;">IE</td>
+<td style="text-align: center;">Input enable pin（‘1’enabled）</td>
+</tr>
+<tr>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">Output signal of the receiver</td>
+</tr>
+<tr>
+<td style="text-align: center;">RONMD2~0</td>
+<td style="text-align: center;">Output resistance selection pin</td>
+</tr>
+<tr>
+<td style="text-align: center;">ODTEN</td>
+<td style="text-align: center;">ODT enable pin（‘1’enabled）</td>
+</tr>
+<tr>
+<td style="text-align: center;">ODTMD2~0</td>
+<td style="text-align: center;">ODT resistance selection</td>
+</tr>
+<tr>
+<td style="text-align: center;">D15V</td>
+<td style="text-align: center;">I/O power selection pin（’0‘：1.2v or 1.35v     ’1‘：1.5v or 1.8v）</td>
+</tr>
+<tr>
+<td style="text-align: center;">MDDR1</td>
+<td style="text-align: center;">MDDR mode selection pin（’0’：DDR2 mode    ‘1’：LPDDR(MDDR)mode）</td>
+</tr>
+</tbody>
+</table><p>the selection of the output driver impedance</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">RONMD2</th>
+<th style="text-align: center;">RONMD1</th>
+<th style="text-align: center;">RONMD0</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">120Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">120Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">80Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">60Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">48Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">40Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">34.3Ω</td>
+</tr>
+</tbody>
+</table><p>On-die termination</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">ODTMD2</th>
+<th style="text-align: center;">ODTMD1</th>
+<th style="text-align: center;">ODTMD0</th>
+<th style="text-align: center;">ODTEN</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">ODT is disabled</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">ODT is disabled</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">120Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">60Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">40Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Reserved</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">30Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">24Ω</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">20Ω</td>
+</tr>
+</tbody>
+</table><ul class="simple">
+<li><p><strong>XOSCAHINTLA</strong></p></li>
+</ul>
+<p>The table below summarizes the function and specific values for each pin</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>Control Pin</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S0 and S1</td>
+<td>Output driving capability control</td>
+</tr>
+<tr>
+<td>E and EB</td>
+<td>Operating mode control</td>
+</tr>
+<tr>
+<td>FEB</td>
+<td>Internal feedback resistor control</td>
+</tr>
+</tbody>
+</table><p>Programmable Features of Output Driving Capability</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>S0</th>
+<th>S1</th>
+<th>Programmable Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>For operating frequency at 1.0 MHz ~ 12 MHz</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>For operating frequency at 12 MHz ~ 24 MHz</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>For operating frequency at 24 MHz ~ 36 MHz</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>For operating frequency at 36 MHz ~ 48 MHz</td>
+</tr>
+</tbody>
+</table><p>Programmable Features of Operating Mode</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>E</th>
+<th>EB</th>
+<th>Programmable Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>Power-down (Stop) mode</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>Parallel mode</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>Oscillation mode</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>Tri-state mode</td>
+</tr>
+</tbody>
+</table><p>Programmable Features of Internal Feedback Resistor</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>FEB</th>
+<th>Programmable Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>With the internal feedback</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Without the internal feedback</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fpga.html" class="btn btn-neutral float-left" title="3. Prototype Verificaton On FPGA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="device.html" class="btn btn-neutral float-right" title="5. DEVICE(SD)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

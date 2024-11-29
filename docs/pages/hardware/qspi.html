@@ -1,0 +1,794 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.6 QSPI &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.7 SRAM" href="sram.html" />
+    <link rel="prev" title="2.5 JTAG" href="jtag.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">1. START</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Hardware</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Overview.html">2.1 OVERVIEW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpio.html">2.2 GPIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uart.html">2.3 UART</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spi.html">2.4 SPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag.html">2.5 JTAG</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.6 QSPI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#qspi-technical-specification">2.6.1 QSPI Technical Specification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#features">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theory-of-operation">2.6.2 Theory of Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qspi-design-verification">2.6.3 QSPI Design Verification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#connecting-spi-1-and-qspi">2.6.3.1 Connecting SPI_1 and QSPI</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#writing-the-test-case">2.6.3.2 Writing the Test Case</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#result-of-test">2.6.3.3 Result of Test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#software-testing">2.6.3.4 Software Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-interfaces">2.6.4 Hardware Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registers">2.6.5 Registers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#status-status-register">STATUS（Status Register）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clkdiv-clock-divider">CLKDIV（Clock Divider）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spicmd-spi-command">SPICMD（SPI Command）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spiadr-spi-address">SPIADR（SPI Address）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spilen-spi-transfer-length">SPILEN（SPI Transfer Length）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#txfifo-spi-transmit-fifo">TXFIFO (SPI Transmit FIFO)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rxfifo-spi-receive-fifo">RXFIFO (SPI Receive FIFO)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checklist">2.6.6 Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sram.html">2.7 SRAM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../fpga.html">3. Prototype Verificaton On FPGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend.html">4 Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device.html">5. DEVICE(SD)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">2. Hardware</a></li>
+      <li class="breadcrumb-item active">2.6 QSPI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/pages/hardware/qspi.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="qspi">
+<h1>2.6 QSPI<a class="headerlink" href="#qspi" title="Link to this heading"></a></h1>
+<section id="qspi-technical-specification">
+<h2>2.6.1 QSPI Technical Specification<a class="headerlink" href="#qspi-technical-specification" title="Link to this heading"></a></h2>
+<p><img alt="alt text" src="../../_images/image-231.png" /></p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>SPI_1 is mounted on the MEISHAV100 as an SPI master, responsible for controlling external SPI data transfers. SPI_1 utilizes the open-source axi-spi-master code, which can be referenced at <a class="reference external" href="https://github.com/pulp-platform/axi_spi_master">https://github.com/pulp-platform/axi_spi_master</a>.</p>
+</section>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Primarily designed for serial NOR Flash and ADC devices</p></li>
+<li><p>Supports standard SPI, dual SPI, or quad-channel SPI commands</p>
+<ul>
+<li><p>Signal SD[0] may also be recognized by other</p></li>
+<li><p>SPI masters as “MOSI,” while SD[3] is commonly referred to as “MISO”</p></li>
+</ul>
+</li>
+<li><p>Separate FIFOs for RX and TX data</p>
+<ul>
+<li><p>288-byte capacity for TX data and 256-byte capacity for RX data</p></li>
+<li><p>FIFO loading/unloading via 32-bit TL-UL registers</p></li>
+<li><p>Supports arbitrary byte counts in each transaction</p></li>
+</ul>
+</li>
+<li><p>SPI clock rate controlled by a separate input clock to the core</p>
+<ul>
+<li><p>SPI SCK line typically toggles at half the core clock frequency</p></li>
+<li><p>An additional clock rate divider is available to reduce the frequency if needed</p></li>
+</ul>
+</li>
+<li><p>Supports all SPI polarities and phases (CPOL, CPHA)</p>
+<ul>
+<li><p>Additional support for “full-cycle” SPI transactions, where data can be read after an entire SPI clock cycle (as opposed to the typical half cycle in SPI interfaces)</p></li>
+</ul>
+</li>
+<li><p>Single Transfer Rate (STR) only (i.e., receiving data on multiple lines but only sampling data on one clock edge)</p>
+<ul>
+<li><p>Does not support Dual Transfer Rate (DTR)</p></li>
+</ul>
+</li>
+<li><p>Pass-through mode for coordination with the SPI_DEVICE IP</p></li>
+<li><p>Automatic control of the chip select signal line</p></li>
+<li><p>Compact interrupt footprint: two lines corresponding to two distinct interrupt classes: “error” and “spi_event”</p>
+<ul>
+<li><p>Fine-grained interrupt masking provided by an auxiliary enable register</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="theory-of-operation">
+<h2>2.6.2 Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Link to this heading"></a></h2>
+</section>
+<section id="qspi-design-verification">
+<h2>2.6.3 QSPI Design Verification<a class="headerlink" href="#qspi-design-verification" title="Link to this heading"></a></h2>
+<p>Connect <code class="docutils literal notranslate"><span class="pre">spi_1</span></code> to the QSPI on MEISHAV100, and use data sent via <code class="docutils literal notranslate"><span class="pre">spi_1</span></code> to control QSPI for reading and writing memory.</p>
+<section id="connecting-spi-1-and-qspi">
+<h3>2.6.3.1 Connecting SPI_1 and QSPI<a class="headerlink" href="#connecting-spi-1-and-qspi" title="Link to this heading"></a></h3>
+<p>Add the following code to the top-level file <strong>dut_MEISHAV100_TOP_wrapper.sv</strong>:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// spi_1 test</span>
+
+<span class="k">assign</span><span class="w"> </span><span class="n">spi_slave_if</span><span class="p">.</span><span class="n">spi_sdo</span><span class="w">         </span><span class="o">=</span><span class="w">   </span><span class="n">spi_master_sdo</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">spi_master_sdi</span><span class="w">               </span><span class="o">=</span><span class="w">   </span><span class="n">spi_slave_if</span><span class="p">.</span><span class="n">spi_sdi</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">spi_slave_if</span><span class="p">.</span><span class="n">spi_clk</span><span class="w">         </span><span class="o">=</span><span class="w">   </span><span class="n">spi_master_clk</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">spi_slave_if</span><span class="p">.</span><span class="n">spi_csn</span><span class="w">         </span><span class="o">=</span><span class="w">   </span><span class="n">spi_master_csn</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">spi_slave_if</span></code> is a virtual interface added for testing QSPI, used to connect to QSPI. The <code class="docutils literal notranslate"><span class="pre">spi_master</span></code> signal is the <code class="docutils literal notranslate"><span class="pre">spi_1</span></code> signal brought out at the top level.</p>
+</section>
+<section id="writing-the-test-case">
+<h3>2.6.3.2 Writing the Test Case<a class="headerlink" href="#writing-the-test-case" title="Link to this heading"></a></h3>
+<p>Follow the structure of other test cases, primarily modifying the content within the <code class="docutils literal notranslate"><span class="pre">main_phase</span></code>:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">tl_agent_pkg</span><span class="o">::</span><span class="n">tl_host_single_seq</span><span class="w"> </span><span class="n">seq</span><span class="p">;</span>
+<span class="n">seq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="p">(</span><span class="s">&quot;seq&quot;</span><span class="p">);</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">control_addr_alignment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">control_rand_source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">control_rand_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">override_a_source_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">overridden_a_source_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+
+<span class="no">`DV_CHECK_RANDOMIZE_WITH_FATAL</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span>
+<span class="w">  </span><span class="n">size</span><span class="w">             </span><span class="o">==</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="w">  </span><span class="n">mask</span><span class="w">             </span><span class="o">==</span><span class="w"> </span><span class="mh">&#39;hf</span><span class="p">;</span>
+<span class="w">  </span><span class="n">source</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="w">  </span><span class="n">write</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="p">)</span>
+
+<span class="c1">// Initialize Mode and clock and data length, command and address length, Dummy cycles</span>
+
+<span class="c1">// reset FIFO</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_STATUS</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mh">&#39;h1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mh">4</span><span class="p">);</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+
+<span class="c1">// set clock, spi_clk = axi_clk / (2 * (clk_div + 1))</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_CLKDIV</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h1</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="c1">// set data length and command to be 8 bits, address 0 bits</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPILEN</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">16&#39;h8</span><span class="p">,</span><span class="w"> </span><span class="mh">2&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">6&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">2&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">6&#39;h8</span><span class="p">};</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+
+<span class="c1">// set write dummy cycles to be 0, read dummy cycles to be 33</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPIDUM</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">16&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">16&#39;h21</span><span class="p">};</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>Select the values for the configuration registers based on whether QSPI transfer is used or not.</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// if transmit by qspi mode, need to set reg0 of qspi to 1 </span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">qspi_mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPICMD</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h01</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mh">24</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_STATUS</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h0102</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_TXFIFO</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8&#39;h01</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mh">24</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>Start sending data from a specific address, and increment the address by 4 after each data transmission.</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// set data length and address to be 32 bits, command 8 bits</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPILEN</span><span class="p">;</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">16&#39;h20</span><span class="p">,</span><span class="w"> </span><span class="mh">2&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">6&#39;h20</span><span class="p">,</span><span class="w"> </span><span class="mh">2&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">6&#39;h8</span><span class="p">};</span>
+<span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="c1">// set initial address and data</span>
+<span class="n">rw_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h5003</span><span class="n">_F060</span><span class="p">;</span>
+<span class="n">write_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h1</span><span class="p">;</span>
+
+<span class="k">repeat</span><span class="p">(</span><span class="mh">2000</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="n">$sformatf</span><span class="p">(</span><span class="s">&quot;spi_1 send data: %h&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">write_data</span><span class="p">),</span><span class="w"> </span><span class="n">UVM_NONE</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">// write data to rw_addr</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">write</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPICMD</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h0200</span><span class="n">_0000</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPIADR</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rw_addr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">qspi_mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_STATUS</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h0108</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_STATUS</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h0102</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_TXFIFO</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">write_data</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">1000</span><span class="n">ns</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// read data from rw_addr, data will be stored in rxfifo</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPICMD</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h0b00</span><span class="n">_0000</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_SPIADR</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rw_addr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">qspi_mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_STATUS</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h0104</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_STATUS</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32&#39;h0101</span><span class="p">;</span>
+<span class="w">        </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="p">#</span><span class="mh">1000</span><span class="n">ns</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// read data from spi_1 rxfifo</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`SPI1_REG64_RXFIFO</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">write</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">seq</span><span class="p">.</span><span class="n">start</span><span class="p">(</span><span class="n">env</span><span class="p">.</span><span class="n">virtual_sequencer</span><span class="p">.</span><span class="n">match_sqr</span><span class="p">(</span><span class="s">&quot;tl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tile-RocketTile*tl_mem_mst&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">rw_addr</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mh">32&#39;h4</span><span class="p">;</span>
+<span class="w">    </span><span class="n">write_data</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mh">32&#39;h1</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="result-of-test">
+<h3>2.6.3.3 Result of Test<a class="headerlink" href="#result-of-test" title="Link to this heading"></a></h3>
+<p>Primarily test the address spaces for DDR and IRAM. The testing method involves separately testing the low, middle, and high parts of both address spaces. A portion of addresses in each part are tested. The test results are as follows:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Address</th>
+<th style="text-align: center;">Result</th>
+<th style="text-align: center;">Issue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x8000_0000~0x8000_9C40 (10000 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x9FFF_D1C0~0xA000_130C (10000 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0xBFFF_63C0~0xC000_0000 (10000 addresses)</td>
+<td style="text-align: center;">Partial Errors</td>
+<td style="text-align: center;">The last three addresses read data as 0. After comparing waveforms and code, it was found to be an issue with the mounted VIP. Setting the working mode of the VIP mounted to <code>spi_1</code> to SLAVE resulted in correct operation.</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5000_0000~0x5000_1F40 (2000 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5003_F060~0x5004_0FA0 (2000 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5007_E0C0~0x5008_0000 (2000 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></section>
+<section id="software-testing">
+<h3>2.6.3.4 Software Testing<a class="headerlink" href="#software-testing" title="Link to this heading"></a></h3>
+<p>Translate the above SystemVerilog test code into C language code for software testing. The C code is as follows:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// See LICENSE for license details.</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;platform.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;common.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;spi1.h&quot;</span>
+
+<span class="cp">#define QSPI 1</span>
+
+<span class="cp">#define DEBUG</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;kprintf.h&quot;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">addr</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">0x80000000</span><span class="p">,</span><span class="w"> </span><span class="mh">0x9FFFF830</span><span class="p">,</span><span class="w"> </span><span class="mh">0xBFFFF060</span><span class="p">,</span><span class="w"> </span><span class="mh">0x50000000</span><span class="p">,</span><span class="w"> </span><span class="mh">0x50003830</span><span class="p">,</span><span class="w"> </span><span class="mh">0x50007060</span><span class="p">};</span>
+<span class="w">  </span>
+<span class="w">    </span><span class="n">REG32</span><span class="p">(</span><span class="n">uart</span><span class="p">,</span><span class="w"> </span><span class="n">UART_REG_TXCTRL</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UART_TXEN</span><span class="p">;</span><span class="w">  </span><span class="c1">// donot delete</span>
+
+<span class="w">    </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;Test begin ! @ core: %x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">read_csr</span><span class="p">(</span><span class="n">mhartid</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// reset fifo</span>
+<span class="w">    </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// set clock, spi_clk = axi_clk / (2 * (clk_div + 1))</span>
+<span class="w">    </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_CLKDIV</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x01</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// set data length and command to be 8 bits, address 0 bits</span>
+<span class="w">    </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPILEN</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mh">0x08</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">0x08</span><span class="p">;</span>
+<span class="w">    </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPIDUM</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x21</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// enable qspi transmit</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">QSPI</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPICMD</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mh">0x01</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">24</span><span class="p">);</span>
+<span class="w">        </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x0102</span><span class="p">;</span>
+<span class="w">        </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_TXFIFO</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mh">0x01</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">24</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// set data length and address to be 32 bits, command 8 bits</span>
+<span class="w">    </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPILEN</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mh">0x20</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">0x20</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">0x08</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// set initial address and data</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x12345678</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">rw_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addr</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;DDR test begin!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;IRAM test begin!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// wait until SPI is idle</span>
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x01</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// set write command and address</span>
+<span class="w">            </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPICMD</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mh">0x02</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">24</span><span class="p">);</span>
+<span class="w">            </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPIADR</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rw_addr</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// initiate a write operation with select CS0</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">QSPI</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x0108</span><span class="p">;</span>
+<span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x0102</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// wait until tx buffer has available place</span>
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(((</span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">24</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xFF</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// write data to addr</span>
+<span class="w">            </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_TXFIFO</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// wait until SPI is idle</span>
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x01</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// set read command and address</span>
+<span class="w">            </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPICMD</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mh">0x0b</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">24</span><span class="p">);</span>
+<span class="w">            </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_SPIADR</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rw_addr</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// initiate a write operation with select CS0</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">QSPI</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x0104</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x0101</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// wait until rx buffer has available place</span>
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(((</span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_STATUS</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xFF</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">            </span><span class="c1">// read data from rxfifo</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">read_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_REG32</span><span class="p">(</span><span class="n">SPI1_BASE_ADDR</span><span class="p">,</span><span class="w"> </span><span class="n">SPI1_REG_RXFIFO</span><span class="p">);</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_data</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;SPI1_TEST FAIL! at addr: %x, the correct data is: %x, but get: %x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rw_addr</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">read_data</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;SPI1_TEST PASS! at addr: %x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">rw_addr</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">rw_addr</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mh">0x4</span><span class="p">;</span>
+<span class="w">            </span><span class="n">data</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mh">0x1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;DDR test end!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;IRAM test end!&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;Test end ! @ core: %x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">read_csr</span><span class="p">(</span><span class="n">mhartid</span><span class="p">));</span>
+
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+<span class="w">        </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;PASS&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="p">{</span>
+<span class="w">        </span><span class="n">kprintf</span><span class="p">(</span><span class="s">&quot;FAIL&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">kprintf</span><span class="p">(</span><span class="n">SHUTDOWN_FLAG_STR</span><span class="p">);</span><span class="w">  </span><span class="c1">// donnot delete</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</pre></div>
+</div>
+<p>Run the test case <code class="docutils literal notranslate"><span class="pre">soft_base_test.sv</span></code>. Mount the AXI VIP in the <code class="docutils literal notranslate"><span class="pre">initialize</span></code> function of the <code class="docutils literal notranslate"><span class="pre">soft_base_test_cfg</span></code> class to ensure QSPI operates normally.</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">foreach</span><span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_sw</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_sw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dv_utils_pkg</span><span class="o">::</span><span class="n">ON</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">uvm_is_match</span><span class="p">(</span><span class="s">&quot;*vc707mig1gb*s_axi_slv*&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_work_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dv_utils_pkg</span><span class="o">::</span><span class="n">SLAVE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">uvm_is_match</span><span class="p">(</span><span class="s">&quot;*u_axi_spi_slave*m_axi_mst*&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="c1">// for qspi</span>
+<span class="w">        </span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_work_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dv_utils_pkg</span><span class="o">::</span><span class="n">SLAVE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">uvm_is_match</span><span class="p">(</span><span class="s">&quot;*vc707axi_to_pcie_x1*m_axi_slv*&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_work_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dv_utils_pkg</span><span class="o">::</span><span class="n">ONLY_MONITOR</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">uvm_is_match</span><span class="p">(</span><span class="s">&quot;*vc707axi_to_pcie_x1*s_axi_mst*&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_work_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dv_utils_pkg</span><span class="o">::</span><span class="n">SLAVE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_work_mode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dv_utils_pkg</span><span class="o">::</span><span class="n">ONLY_MONITOR</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="n">get_type_name</span><span class="p">(),</span><span class="w"> </span><span class="n">$sformatf</span><span class="p">(</span><span class="s">&quot;set_vip_agent_work_mode for inst_path %s, work_mode %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">this</span><span class="p">.</span><span class="n">axi_agent_work_mode</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">name</span><span class="p">()),</span><span class="w"> </span><span class="n">UVM_DEBUG</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">//this.m_axi_agent_cfg[i].if_mode = dv_utils_pkg::Host;  // donnot need add in here</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>Then, run this test case, compile the above C code into a hex file and load it into the RAM. Run the simulation, and the simulation results are as follows:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Address</th>
+<th style="text-align: center;">Result</th>
+<th style="text-align: center;">Issue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x8000_0000~0x8000_0FA0 (500 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x9FFF_F830~0xA000_07D0 (500 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0xBFFF_F060~0xC000_0000 (500 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5000_0000~0x5000_0FA0 (500 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5003_F830~0x5004_07D0 (500 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">0x5007_F060~0x5008_0000 (500 addresses)</td>
+<td style="text-align: center;">Correct</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="hardware-interfaces">
+<h2>2.6.4 Hardware Interfaces<a class="headerlink" href="#hardware-interfaces" title="Link to this heading"></a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Signal</th>
+<th style="text-align: center;">Direction</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">spi_clk</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Master Clock</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_csn0</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Chip Selcet0</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_csn1</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Chip Selcet1</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_csn2</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Chip Selcet2</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_csn3</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Chip Selcet3</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_mode[1:0]</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">SPI Mode</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdo0</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Output Line0</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdo1</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Output Line1</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdo2</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Output Line2</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdo3</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">Output Line3</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdi0</td>
+<td style="text-align: center;">input</td>
+<td style="text-align: center;">Input Line0</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdi1</td>
+<td style="text-align: center;">input</td>
+<td style="text-align: center;">Input Line1</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdi2</td>
+<td style="text-align: center;">input</td>
+<td style="text-align: center;">Input Line2</td>
+</tr>
+<tr>
+<td style="text-align: center;">spi_sdi3</td>
+<td style="text-align: center;">input</td>
+<td style="text-align: center;">Input Line3</td>
+</tr>
+</tbody>
+</table></section>
+<section id="registers">
+<h2>2.6.5 Registers<a class="headerlink" href="#registers" title="Link to this heading"></a></h2>
+<p>According to the pulpino documentation, the control registers and related functionalities for SPI_1 are as follows:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Offset</th>
+<th style="text-align: center;">Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x00</td>
+<td style="text-align: center;">STATUS</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x08</td>
+<td style="text-align: center;">CLKDIV</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x10</td>
+<td style="text-align: center;">SPICMD</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x18</td>
+<td style="text-align: center;">SPIADR</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x20</td>
+<td style="text-align: center;">SPILEN</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x28</td>
+<td style="text-align: center;">SPIDUM</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x40</td>
+<td style="text-align: center;">TXFIFO</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x80</td>
+<td style="text-align: center;">RXFIFO</td>
+</tr>
+</tbody>
+</table><section id="status-status-register">
+<h3>STATUS（Status Register）<a class="headerlink" href="#status-status-register" title="Link to this heading"></a></h3>
+<p><strong>Reset Value：0x0000_0000</strong>
+<img alt="alt text" src="../../_images/38481e84-dde1-44ed-b3ca-65937ab976b51.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 11: 8  CS: Chip Select</strong>
+Designates the chip select signal to be used for the next transfer.</p></li>
+<li><p><strong>Bit 4   SRST: Software Reset</strong>
+Clears the FIFO and terminates the ongoing transfer.</p></li>
+<li><p><strong>Bit 3   QWR: Quad Write Command</strong>
+Executes a write operation in QuadSPI mode.</p></li>
+<li><p><strong>Bit 2   QRD: Quad Read Command</strong>
+Executes a read operation in QuadSPI mode.</p></li>
+<li><p><strong>Bit 1   WR: Write Command</strong>
+Executes a write operation in standard SPI mode.</p></li>
+<li><p><strong>Bit 0   RD: Read Command</strong>
+Executes a read operation in standard SPI mode.</p></li>
+</ul>
+</section>
+<section id="clkdiv-clock-divider">
+<h3>CLKDIV（Clock Divider）<a class="headerlink" href="#clkdiv-clock-divider" title="Link to this heading"></a></h3>
+<p><strong>Reset Value：0x0000_0000</strong>
+<img alt="alt text" src="../../_images/5327509c-1857-4e83-8258-c9a460d652691.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 7:0  CLKDIV: Clock Divider</strong>
+The clock divider value, used to divide the SoC clock for SPI transfers. This register should not be modified during a transfer.</p></li>
+</ul>
+</section>
+<section id="spicmd-spi-command">
+<h3>SPICMD（SPI Command）<a class="headerlink" href="#spicmd-spi-command" title="Link to this heading"></a></h3>
+<p><strong>Reset Value：0x0000_0000</strong></p>
+<p><img alt="alt text" src="../../_images/be818689-11e9-4643-9b37-3969e3aa2e001.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 31:0  SPICMD: SPI Command</strong>
+When executing a read or write transfer, the SPI command is sent first before any data is read or written. The length of the SPI command can be controlled using the SPILEN register.</p></li>
+</ul>
+</section>
+<section id="spiadr-spi-address">
+<h3>SPIADR（SPI Address）<a class="headerlink" href="#spiadr-spi-address" title="Link to this heading"></a></h3>
+<p><strong>Reset Value：0x0000_0000</strong></p>
+<p><img alt="alt text" src="../../_images/3f6ab307-a8e4-4258-a1c4-b2b35847373c1.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 31:0  SPIADR: SPI Address</strong>
+When performing a read or write transfer, the SPI command is sent first, followed by the SPI address, before any data is read or written. The length of the SPI address can be controlled using the SPILEN register.</p></li>
+</ul>
+</section>
+<section id="spilen-spi-transfer-length">
+<h3>SPILEN（SPI Transfer Length）<a class="headerlink" href="#spilen-spi-transfer-length" title="Link to this heading"></a></h3>
+<p><strong>Reset Value：0x0000_0000</strong></p>
+<p><img alt="alt text" src="../../_images/bf22607e-923e-4f6f-8679-bad952a7b3151.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 31:16  DATALEN: SPI Data Length</strong>
+The number of bits to be read or written. Note that the SPI command and address are first written to the SPI slave device.</p></li>
+<li><p><strong>Bit 13:8  ADDRLEN: SPI Address Length</strong>
+The number of bits for the SPI address that should be sent.</p></li>
+<li><p><strong>Bit 5:0  SPI Command Length</strong>
+The number of bits for the SPI command that should be sent.</p></li>
+</ul>
+<section id="spidum-spi-dummy-cycles">
+<h4>SPIDUM（SPI Dummy Cycles）<a class="headerlink" href="#spidum-spi-dummy-cycles" title="Link to this heading"></a></h4>
+<p><strong>Reset Value：0x0000_0000</strong></p>
+<p><img alt="alt text" src="../../_images/fead8b77-1e4c-495d-947c-26f0f200ff171.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 31:16  DUMMYWR: Write Dummy Cycles</strong>
+The number of dummy cycles (no write or read) between sending the SPI command + SPI address and writing data.</p></li>
+<li><p><strong>Bit 15:0  DUMMYRD: Read Dummy Cycles</strong>
+The number of dummy cycles (no write or read) between sending the SPI command + SPI address and reading data.</p></li>
+</ul>
+</section>
+</section>
+<section id="txfifo-spi-transmit-fifo">
+<h3>TXFIFO (SPI Transmit FIFO)<a class="headerlink" href="#txfifo-spi-transmit-fifo" title="Link to this heading"></a></h3>
+<p><strong>Reset Value: 0x0000_0000</strong></p>
+<p><img alt="alt text" src="../../_images/273da941-0aed-463d-b909-8f4df84aa9bb1.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 31:0  TX: Transmit Data</strong>
+Data to be written into the FIFO for transmission.</p></li>
+</ul>
+</section>
+<section id="rxfifo-spi-receive-fifo">
+<h3>RXFIFO (SPI Receive FIFO)<a class="headerlink" href="#rxfifo-spi-receive-fifo" title="Link to this heading"></a></h3>
+<p><strong>Reset Value: 0x0000_0000</strong></p>
+<p><img alt="alt text" src="../../_images/3b08a5ca-6b21-4ab6-8dee-8c326cb5e1f51.png" /></p>
+<ul class="simple">
+<li><p><strong>Bit 31:0  RX: Receive Data</strong>
+Data to be read from the FIFO received during transmission.</p></li>
+</ul>
+<p>Note: There seems to be a typo in the original text where “Transmit Data” is mentioned for both TX and RX. In the RXFIFO section, it should be “Receive Data” as corrected in the translation.</p>
+</section>
+</section>
+<section id="checklist">
+<h2>2.6.6 Checklist<a class="headerlink" href="#checklist" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="jtag.html" class="btn btn-neutral float-left" title="2.5 JTAG" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sram.html" class="btn btn-neutral float-right" title="2.7 SRAM" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,844 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5. DEVICE(SD) &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="4 Backend" href="backend.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="start.html">1. START</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware/index.html">2. Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fpga.html">3. Prototype Verificaton On FPGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backend.html">4 Backend</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. DEVICE(SD)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sd-technical-specification">5.1 SD Technical Specification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#theory-of-operation">5.2 Theory of Operation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spi-mode">SPI Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#power-on">Power-on</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#receiving-commands">Receiving Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#responding-to-commands">Responding to Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#card-initialisation">Card Initialisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clock-and-phase">Clock and Phase</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sd-card-design-verification">5.3 SD Card Design Verification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#testplan">5.3.1 Testplan</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sd-card-initialisation-test">5.3.1.2 SD card initialisation test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sd-card-data-write-test">5.3.1.3 SD card data write test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sd-card-data-reading-test">5.3.1.4 SD card data reading test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#single-block-read-operation">5.3.1.4.1 Single Block Read Operation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multiple-block-read-operation">5.3.1.4.2 Multiple Block Read Operation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-interfaces">5.4 Hardware Interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sd-card-i-o">5.4.1 SD card I/O</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#registers">5.5 Registers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#two-dimensional-array">two-dimensional array</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#checklist">5.6 Checklist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#design">Design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verify">Verify</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">5. DEVICE(SD)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pages/device.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="device-sd">
+<h1>5. DEVICE(SD)<a class="headerlink" href="#device-sd" title="Link to this heading"></a></h1>
+<section id="sd-technical-specification">
+<h2>5.1 SD Technical Specification<a class="headerlink" href="#sd-technical-specification" title="Link to this heading"></a></h2>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>SD memory card is a new generation of memory device based on semiconductor flash memory, which is widely used in portable devices, such as digital cameras, smart phones and multimedia players, due to its excellent features such as small size, fast data transfer speed and hot-swappable.</p>
+<p>SD cards have two communication modes, sdio and spi. The SPI mode consists of an auxiliary communication protocol provided by flash-based SD memory cards. This mode is a subset of the SD memory card protocol, and the interface is selected during the first reset command (CMD0) after power-on and cannot be changed once the device is powered on.</p>
+<p>In the case of standard-capacity memory cards, data blocks can be as large as one card write block and as small as one byte. The card option specified in the CSD register enables partial block read/write operations.</p>
+<p>In the case of high-capacity SD memory cards, the data block size is fixed at 512 bytes. the block length set by CMD16 is used only for CMD42 and not for memory data transfer. Therefore, partial block read/write operations are also disabled. In addition, write-protect commands (CMD28, CMD29 and CMD30) are not supported.</p>
+</section>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>SD card verilog simulation model with spi mode (mode 0) support</p></li>
+<li><p>High-capacity SD memory card (SDHC) with a size of 32GB</p></li>
+<li><p>Operating voltage range of 2.7-3.6V</p></li>
+<li><p>Support card initialization, write data, read data</p></li>
+<li><p>Support commands including CMD0, CMD8, CMD12, CMD16, CMD17, CMD18, CMD24, CMD25, CMD55, CMD58, ACMD41 and so on.</p></li>
+</ul>
+</section>
+</section>
+<section id="theory-of-operation">
+<h2>5.2 Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Link to this heading"></a></h2>
+<section id="spi-mode">
+<h3>SPI Mode<a class="headerlink" href="#spi-mode" title="Link to this heading"></a></h3>
+<p>SPI messages consist of commands, responses, and data block tokens. All communication between the host and the card is controlled by the host. The host initiates each bus process by setting the CS signal low.</p>
+<p>The selected card always responds to commands, and when the card encounters a data retrieval problem during a read operation, it responds with an error response (replacing the expected block of data) rather than a timeout as in SD mode.</p>
+<p>In addition, each data block sent to the card during a write operation will respond with a data response token.</p>
+</section>
+<section id="power-on">
+<h3>Power-on<a class="headerlink" href="#power-on" title="Link to this heading"></a></h3>
+<p>The state machine st waits 74 clock cycles in the PowerOn state and switches to the IDLE state when power-on is complete.</p>
+</section>
+<section id="receiving-commands">
+<h3>Receiving Commands<a class="headerlink" href="#receiving-commands" title="Link to this heading"></a></h3>
+<p>When a 48-bit command is transmitted on the mosi line, he first two bits 0x01 of the command is recognised and the state machine st switches from IDLE to CmdBit46 and then to CommandIn to receive the next 46 bits of data.</p>
+</section>
+<section id="responding-to-commands">
+<h3>Responding to Commands<a class="headerlink" href="#responding-to-commands" title="Link to this heading"></a></h3>
+<p>The state machine st receives the command in the CommandIn state and switches to CardResponse state, in which it responds to the command invocation function and the response is sent to the miso line.</p>
+<p>After the response is sent the state machine st jumps to the corresponding state to complete the wait or read/write data operation according to the previously received command.</p>
+</section>
+<section id="card-initialisation">
+<h3>Card Initialisation<a class="headerlink" href="#card-initialisation" title="Link to this heading"></a></h3>
+<p>Use state machine ist to respond to initialisation commands and set init_done to 1 when the commands have all completed.</p>
+</section>
+<section id="clock-and-phase">
+<h3>Clock and Phase<a class="headerlink" href="#clock-and-phase" title="Link to this heading"></a></h3>
+<p>A maximum clock of 400KHz is required in Card Idntification Mode.
+A maximum clock of 25MHz is required in Data Transfer Mode.</p>
+<p>The SPI device module only internally supports mode 0, where data is shifted out on the falling edge and sampled on the rising edge.</p>
+<p>The SPI device module internally supports mode 0, in which data is shifted out on the falling edge and sampled on the rising edge, and the SPI clock returns high at the end of the transaction.</p>
+</section>
+</section>
+<section id="sd-card-design-verification">
+<h2>5.3 SD Card Design Verification<a class="headerlink" href="#sd-card-design-verification" title="Link to this heading"></a></h2>
+<p><strong>Goals</strong></p>
+<p>Verify SD card features by running dynamic simulations with a SV/UVM based testbench</p>
+<p><strong>Design features</strong></p>
+<p>For detailed information on UART design features, please see the <strong>SD Technical   Specification</strong>.</p>
+<p><strong>Testbench architecture</strong></p>
+<p>The top-level testbed is located in ‘\trunk\hw\d2dv100_top\dv’ and the SD card model is instantiated in dut_MEISHAV100_TOP_wrapper.sv.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">SD card signals</th>
+<th style="text-align: center;">SD card signals given by the top-level module</th>
+<th style="text-align: center;">I/O</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">sclk</td>
+<td style="text-align: center;">spi_clk</td>
+<td style="text-align: center;">output</td>
+</tr>
+<tr>
+<td style="text-align: center;">mosi</td>
+<td style="text-align: center;">MOSI</td>
+<td style="text-align: center;">output</td>
+</tr>
+<tr>
+<td style="text-align: center;">miso</td>
+<td style="text-align: center;">MISO</td>
+<td style="text-align: center;">input</td>
+</tr>
+<tr>
+<td style="text-align: center;">ncs</td>
+<td style="text-align: center;">SS_n</td>
+<td style="text-align: center;">output</td>
+</tr>
+<tr>
+<td style="text-align: center;">rstn</td>
+<td style="text-align: center;">spi_rst_n</td>
+<td style="text-align: center;">output</td>
+</tr>
+</tbody>
+</table><p><strong>Stimulus strategy</strong></p>
+<p>This test was modified based on the sd.c code written for the Freedom U500.</p>
+<p><strong>Self-checking strategy</strong></p>
+<p>Provide the spi port on the soc to send data to the spi-slave to see if the spi-slave can send back the correct value.</p>
+<p>In the main function, send data to spi_txfifo via REG32(spi, SPI_REG_TXFIFO), then the spi will automatically send the data from the txfifo, and we only need to check if the mosi port is correctly outputting in the monitor. Since the txfifo can only send one byte of data at a time, choosing 0x00~0xff as the test data will cover all cases.</p>
+<section id="testplan">
+<h3>5.3.1 Testplan<a class="headerlink" href="#testplan" title="Link to this heading"></a></h3>
+<section id="sd-card-initialisation-test">
+<h4>5.3.1.2 SD card initialisation test<a class="headerlink" href="#sd-card-initialisation-test" title="Link to this heading"></a></h4>
+<p>The SD card needs to be initialised before performing data read and write operations.
+<strong>Power-on and clock pulse sending</strong>:</p>
+<ul class="simple">
+<li><p>After the SD card is powered on, the host needs to send at least 74 clock pulses to the SD card. This is because the SD card needs about 64 clock cycles to reach the normal operating voltage, after which 10 clock cycles are used to synchronise with the SD card.</p></li>
+<li><p>During this time, the chip select signal ncs and the master output slave input signal mosi should be held high.</p></li>
+</ul>
+<p><strong>Send CMD0 command</strong>:</p>
+<ul class="simple">
+<li><p>The chip select signal ncs is pulled low and the CMD0 (0x40) command is sent to the SD card with parameters 0x00_00_00_00_00 and CRC check bit 0x95.</p></li>
+<li><p>This command is used to reset the SD card. After the command is sent, wait for the SD card to return the response data R1.</p></li>
+</ul>
+<p><strong>Check CMD0 response:</strong></p>
+<ul class="simple">
+<li><p>Check the returned response data R1. If R1 is 0x01, it indicates that the SD card is in idle state and you can enter SPI mode and continue to the next step. If R1 is any other value, you need to re-execute step 2.</p></li>
+<li><p>Wait for 8 clock cycles and then pull up the chip select signal ncs.</p></li>
+</ul>
+<p><strong>Send CMD8 command</strong>:</p>
+<ul class="simple">
+<li><p>Pull down the chip select signal ncs again and send CMD8 (0x48) command with parameter 0x00_00_01_AA.</p></li>
+<li><p>This command is used to query the version number of the SD card. After the command is sent, wait for the SD card to return the response data R7.</p></li>
+</ul>
+<p><strong>Check CMD8 response</strong>:</p>
+<ul class="simple">
+<li><p>Check the returned response data. If R1 is 0x05, the SD card is not an SD 2.0 card. If R1 is 0x01 and the 32-bit parameter is 0x00_00_01_AA, it is judged to be an SD 2.0 card. If the returned data is incorrect, step 4 needs to be performed again.</p></li>
+<li><p>Wait for 8 clock cycles and pull up the chip select signal ncs.</p></li>
+</ul>
+<p><strong>Sends APP_CMD (CMD55), the precursor command to the ACMD41 command</strong>:</p>
+<ul class="simple">
+<li><p>Pull down the chip select signal ncs and send CMD55 (0x77) command to inform the SD card that the next send is a application-specific command.</p></li>
+<li><p>Wait for the SD card to return the response data R1, check if R1 is 0x01. if yes, continue to the next step; if no, re-execute step 6.</p></li>
+</ul>
+<p><strong>Send ACMD41 command</strong>:</p>
+<ul class="simple">
+<li><p>Pull down the chip select signal ncs and send the ACMD41 (0x69) command to query the SD card initialisation result.</p></li>
+<li><p>Wait for SD card to return response data R1.</p></li>
+</ul>
+<p><strong>Check ACMD41 response</strong>:</p>
+<ul class="simple">
+<li><p>Check R1 in the returned response data R3. if R1 is 0x00, initialisation is complete. If not, it is necessary to re-execute step 6 until the initialisation is successful.</p></li>
+<li><p>Wait for 8 clock cycles and then pull up the chip select signal ncs.</p></li>
+</ul>
+<p>The above steps outline the initialisation process for SD 2.0 specification SD cards, ensuring that the SD card has been correctly initialised prior to data reading and writing.3.5.2</p>
+</section>
+<section id="sd-card-data-write-test">
+<h4>5.3.1.3 SD card data write test<a class="headerlink" href="#sd-card-data-write-test" title="Link to this heading"></a></h4>
+<p>After the initialisation of the SD card is completed, the data writing operation is performed first, and then the written data is read out and verified.</p>
+<section id="single-block-write-operation">
+<h5>5.3.1.3.1 Single Block Write Operation<a class="headerlink" href="#single-block-write-operation" title="Link to this heading"></a></h5>
+<p><strong>Send Write Command</strong>:</p>
+<ul class="simple">
+<li><p>Pull down the chip select signal ncs.</p></li>
+<li><p>Send the CMD24 command (0x58) to the SD card, carrying the 4-byte SD card write sector address as a parameter.</p></li>
+<li><p>The CRC check byte is not used and is written directly to 0xAA.</p></li>
+<li><p>After the command is sent, wait for the SD card to return the response data.</p></li>
+</ul>
+<p><strong>Check response and write data</strong>:</p>
+<ul class="simple">
+<li><p>If the SD card returns the correct response data R1 is 0x00, wait 8 clock cycles.</p></li>
+<li><p>Write token 0xFE to the SD card, immediately followed by a 512-byte block of data.</p></li>
+</ul>
+<p><strong>Write CRC</strong>:</p>
+<ul class="simple">
+<li><p>In SPI mode, no CRC check is performed on the data, and two bytes of 0xFF are written directly as the CRC check byte.</p></li>
+</ul>
+<p><strong>Waiting for SD card response</strong>:</p>
+<ul class="simple">
+<li><p>After the verification data is sent, the SD card returns the response data.</p></li>
+<li><p>The SD card then pulls the MISO signal low and enters the write busy state.</p></li>
+</ul>
+<p><strong>Write operation complete</strong>:</p>
+<ul class="simple">
+<li><p>Wait for the MISO signal to be pulled high again to indicate that the SD card exits the write busy state.</p></li>
+<li><p>Wait for 8 clock cycles and then pull up the chip select signal ncs.</p></li>
+<li><p>At this point, the SD card data write operation is complete and other operations can be performed.</p></li>
+</ul>
+</section>
+<section id="multiple-block-write-operation">
+<h5>5.3.1.3.2 Multiple Block Write Operation<a class="headerlink" href="#multiple-block-write-operation" title="Link to this heading"></a></h5>
+<p><strong>Send write command</strong>:</p>
+<ul class="simple">
+<li><p>Pull down the chip select signal ncs.</p></li>
+<li><p>Send a CMD25 command (0x59) to the SD card, carrying the 4-byte SD card write sector address as a parameter.</p></li>
+<li><p>The CRC check byte is not used and is written directly to 0xAA.</p></li>
+<li><p>After the command is sent, wait for the SD card to return the response data.</p></li>
+</ul>
+<p><strong>Check response and write data</strong>:</p>
+<ul class="simple">
+<li><p>If the SD card returns the correct response data R1 is 0x00, wait for 8 clock cycles.</p></li>
+<li><p>Write token 0xFC to the SD card, immediately followed by a 512-byte block of data.</p></li>
+</ul>
+<p><strong>Write CRC check byte</strong>:</p>
+<ul class="simple">
+<li><p>In SPI mode, no CRC check is performed on the data, and two bytes of 0xFF are written directly as the CRC check byte.</p></li>
+</ul>
+<p><strong>Wait for SD card response</strong>:</p>
+<ul class="simple">
+<li><p>After the check data is sent, the SD card will return the response data.</p></li>
+<li><p>The SD card then pulls the MISO signal low and enters the write busy state.</p></li>
+</ul>
+<p><strong>Continue to send data block</strong>:</p>
+<ul class="simple">
+<li><p>Wait for the MISO signal to pull high again to indicate that the SD card exits the write busy state.</p></li>
+<li><p>Write token 0xFC to the SD card, immediately followed by a 512-byte data block.</p></li>
+</ul>
+<p><strong>Write CRC check byte</strong>:</p>
+<ul class="simple">
+<li><p>In SPI mode, no CRC check is performed on the data, and two bytes of 0xFF are written directly as the CRC check byte.</p></li>
+</ul>
+<p><strong>Wait for SD card response</strong>:</p>
+<ul class="simple">
+<li><p>After the check data is sent, the SD card will return the response data.</p></li>
+<li><p>The SD card then pulls the MISO signal low and enters the write busy state.</p></li>
+</ul>
+<p><strong>Write operation complete</strong>:</p>
+<ul class="simple">
+<li><p>Wait for the MISO signal to pull high again to indicate that the SD card exits the write busy state.</p></li>
+<li><p>Send the write end token 0xFD.</p></li>
+<li><p>Wait for 8 clock cycles and then pull up the chip select signal ncs.</p></li>
+<li><p>At this point, the SD card data write operation is complete and other operations can be performed.</p></li>
+</ul>
+<p>The above steps outline the process of SD card data writing to ensure that the data can be correctly written to the specified sectors of the SD card, and to perform the necessary status checks after the writing is complete.</p>
+</section>
+</section>
+<section id="sd-card-data-reading-test">
+<h4>5.3.1.4 SD card data reading test<a class="headerlink" href="#sd-card-data-reading-test" title="Link to this heading"></a></h4>
+<p>After the SD card has been initialised and data written, the operation of reading and verifying the data is performed next.</p>
+</section>
+<section id="single-block-read-operation">
+<h4>5.3.1.4.1 Single Block Read Operation<a class="headerlink" href="#single-block-read-operation" title="Link to this heading"></a></h4>
+<p><strong>Send read command</strong>:</p>
+<ul class="simple">
+<li><p>Pull down the chip select signal ncs.</p></li>
+<li><p>Send the CMD17 command (0x51) to the SD card, carrying the 4-byte SD card read sector address as a parameter.</p></li>
+<li><p>The CRC check byte is not used and is written directly to 0xFF.</p></li>
+<li><p>After the command is sent, wait for the SD card to return the response data.</p></li>
+</ul>
+<p><strong>Check the response and read the data</strong>:</p>
+<ul class="simple">
+<li><p>If the SD card returns the correct response data R1 is 0x00, prepare to receive the data using the data header 0xFE returned by the SD card as a flag.</p></li>
+<li><p>Receive 512 bytes of data read from SD card and 2 bytes of CRC check byte.</p></li>
+</ul>
+<p><strong>Parsing data</strong>:</p>
+<ul class="simple">
+<li><p>After confirming data token 0xFE, receive 512 bytes of data returned from SD card.</p></li>
+<li><p>After data parsing is completed, receive two bytes of CRC check value. In SPI mode, no CRC check is performed on the data, so these two bytes can be ignored.</p></li>
+</ul>
+<p><strong>Read operation complete</strong>:</p>
+<ul class="simple">
+<li><p>After the CRC check byte is received, wait for 8 clock cycles.</p></li>
+<li><p>Pulling up the chip select signal ncs marks the completion of a data read operation.</p></li>
+</ul>
+</section>
+<section id="multiple-block-read-operation">
+<h4>5.3.1.4.2 Multiple Block Read Operation<a class="headerlink" href="#multiple-block-read-operation" title="Link to this heading"></a></h4>
+<p><strong>Send read command</strong>:</p>
+<ul class="simple">
+<li><p>Pull down the chip select signal ncs.</p></li>
+<li><p>Send the CMD18 command (0x52) to the SD card, carrying the 4-byte SD card read sector address as a parameter.</p></li>
+<li><p>The CRC check byte is not used and is written directly to 0xFF.</p></li>
+<li><p>After the command is sent, wait for the SD card to return the response data.</p></li>
+</ul>
+<p><strong>Check the response and read the data</strong>:</p>
+<ul class="simple">
+<li><p>If the SD card returns the correct response data R1 is 0x00, prepare to receive the data using the data token 0xFE returned by the SD card as a flag.</p></li>
+<li><p>Receive 512 bytes of data read from SD card and 2 bytes of CRC check byte.</p></li>
+</ul>
+<p><strong>Parsing data</strong>:</p>
+<ul class="simple">
+<li><p>After confirming data token 0xFE, receive 512 bytes of data returned from SD card.</p></li>
+<li><p>After data parsing is completed, receive two bytes of CRC check value. In SPI mode, no CRC check is performed on the data, so these two bytes can be ignored.</p></li>
+</ul>
+<p><strong>Interrupt reading</strong>:</p>
+<ul class="simple">
+<li><p>Send the abort command cmd12 (0x4c), the abort command can be sent at any time, when 512 bytes are sent, stop sending data.</p></li>
+<li><p>If cmd12 is not sent, it will continue to read the next data block.</p></li>
+</ul>
+<p><strong>Read operation completed</strong>:</p>
+<ul class="simple">
+<li><p>After the CRC check byte is received, wait for 8 clock cycles.</p></li>
+<li><p>Pull up the chip select signal ncs to mark the completion of a data read operation.</p></li>
+</ul>
+<p>The above steps ensure that the previously written data is correctly read from the SD card and the necessary verification is performed.</p>
+</section>
+</section>
+</section>
+<section id="hardware-interfaces">
+<h2>5.4 Hardware Interfaces<a class="headerlink" href="#hardware-interfaces" title="Link to this heading"></a></h2>
+<section id="sd-card-i-o">
+<h3>5.4.1 SD card I/O<a class="headerlink" href="#sd-card-i-o" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Pin name</th>
+<th style="text-align: center;">Direction</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">sclk</td>
+<td style="text-align: center;">input</td>
+<td style="text-align: center;">SD Card Clock</td>
+</tr>
+<tr>
+<td style="text-align: center;">ncs</td>
+<td style="text-align: center;">input</td>
+<td style="text-align: center;">chip select signal</td>
+</tr>
+<tr>
+<td style="text-align: center;">mosi</td>
+<td style="text-align: center;">input</td>
+<td style="text-align: center;">SD card input, host sends commands and data to SD card</td>
+</tr>
+<tr>
+<td style="text-align: center;">miso</td>
+<td style="text-align: center;">output</td>
+<td style="text-align: center;">SD card output to send data or response to host computer</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="registers">
+<h2>5.5 Registers<a class="headerlink" href="#registers" title="Link to this heading"></a></h2>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Name</th>
+<th style="text-align: center;">Offset</th>
+<th style="text-align: center;">bit width</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">csd</td>
+<td style="text-align: center;">\</td>
+<td style="text-align: center;">128</td>
+<td style="text-align: center;">The CSD is card-specific data register that provides information.</td>
+</tr>
+<tr>
+<td style="text-align: center;">cid</td>
+<td style="text-align: center;">\</td>
+<td style="text-align: center;">128</td>
+<td style="text-align: center;">The CID (Card Identification) register contains the card identification information. The value of the CID register is vendor specific.</td>
+</tr>
+<tr>
+<td style="text-align: center;">ocr</td>
+<td style="text-align: center;">\</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">This register describes the operating voltage range and status bit in the power supply.This model is SDHC with a voltage range of 2.7-3.6V</td>
+</tr>
+<tr>
+<td style="text-align: center;">scr</td>
+<td style="text-align: center;">\</td>
+<td style="text-align: center;">64</td>
+<td style="text-align: center;">SCR (SD Card Configuration Register) provides information on the SD memory card’s special features.</td>
+</tr>
+<tr>
+<td style="text-align: center;">st</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">Record SD card state transitions</td>
+</tr>
+<tr>
+<td style="text-align: center;">ist</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">Recording state transitions during SD card initialisation</td>
+</tr>
+<tr>
+<td style="text-align: center;">init_done</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">Initialisation completion flag</td>
+</tr>
+<tr>
+<td style="text-align: center;">token</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">Record the start token for receiving data</td>
+</tr>
+<tr>
+<td style="text-align: center;">multi_st</td>
+<td style="text-align: center;">0x0</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">State machine for continuous data writing, implementation of interrupt commands</td>
+</tr>
+</tbody>
+</table><section id="two-dimensional-array">
+<h3>two-dimensional array<a class="headerlink" href="#two-dimensional-array" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Name</th>
+<th style="text-align: center;">bit width</th>
+<th style="text-align: center;">bit depth</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">flash_mem</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">32*1024*1024*1024</td>
+<td style="text-align: center;">Simulates the data storage area of an SD card, size 32GB</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="checklist">
+<h2>5.6 Checklist<a class="headerlink" href="#checklist" title="Link to this heading"></a></h2>
+<section id="design">
+<h3>Design<a class="headerlink" href="#design" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Command</th>
+<th style="text-align: center;">Result</th>
+<th></th>
+<th style="text-align: center;">Command</th>
+<th style="text-align: center;">Result</th>
+<th></th>
+<th style="text-align: center;">Command</th>
+<th style="text-align: center;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">cmd0</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd18</td>
+<td style="text-align: center;">doen</td>
+<td></td>
+<td style="text-align: center;">cmd42</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd1</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">cmd24</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd56</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd6</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">cmd25</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd58</td>
+<td style="text-align: center;">done</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd8</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd27</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">cmd59</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd9</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd28</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd13</td>
+<td style="text-align: center;">done</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd10</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd29</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd18</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd12</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd30</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd22</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd13</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">cmd32</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd23</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd16</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd33</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd25</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd17</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd38</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd26</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">acmd38</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd41</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">acmd42</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">acmd43-49</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd51</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></section>
+<section id="verify">
+<h3>Verify<a class="headerlink" href="#verify" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Command</th>
+<th style="text-align: center;">Result</th>
+<th></th>
+<th style="text-align: center;">Command</th>
+<th style="text-align: center;">Result</th>
+<th></th>
+<th style="text-align: center;">Command</th>
+<th style="text-align: center;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">cmd0</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd27</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd18</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd1</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">cmd28</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd22</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd6</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">cmd29</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd23</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd8</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd30</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd26</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd9</td>
+<td style="text-align: center;">not start</td>
+<td></td>
+<td style="text-align: center;">cmd32</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd38</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd10</td>
+<td style="text-align: center;">not start</td>
+<td></td>
+<td style="text-align: center;">cmd33</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd41</td>
+<td style="text-align: center;">done</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd12</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd38</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd42</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd13</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">cmd42</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd43-49</td>
+<td style="text-align: center;">waived</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd16</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd55</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">acmd51</td>
+<td style="text-align: center;">not start</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd17</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd56</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;">acmd13</td>
+<td style="text-align: center;">not start</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd18</td>
+<td style="text-align: center;">doen</td>
+<td></td>
+<td style="text-align: center;">cmd58</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd25</td>
+<td style="text-align: center;">done</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmd24</td>
+<td style="text-align: center;">done</td>
+<td></td>
+<td style="text-align: center;">cmd59</td>
+<td style="text-align: center;">waived</td>
+<td></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="backend.html" class="btn btn-neutral float-left" title="4 Backend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.5 JTAG &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.6 QSPI" href="qspi.html" />
+    <link rel="prev" title="2.4 SPI" href="spi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">1. START</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Hardware</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Overview.html">2.1 OVERVIEW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpio.html">2.2 GPIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uart.html">2.3 UART</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spi.html">2.4 SPI</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.5 JTAG</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jtag-technical-specification">2.5.1 JTAG Technical Specification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theory-of-operation">2.5.2 Theory of Operation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-structure">2.5.2.1 Module Structure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jtag-tapc-state-machine">2.5.2.2 JTAG TAPC State Machine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#resetting-jtag-logic">2.5.2.3  Resetting JTAG Logic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jtag-clocking">2.4.2.4 JTAG Clocking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jtag-standard-instructions">2.4.2.5 JTAG Standard Instructions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jtag-debug-commands">2.4.2.6 JTAG Debug Commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#overview-of-states">2.4.2.7 Overview of States</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#jtag-design-verification">2.5.3 JTAG Design Verification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#testplan">2.5.3.1 Testplan</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-interfaces">2.5.4 Hardware Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registers">2.5.5 Registers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#debug-module-debug-bus-registers">2.5.5.1 Debug Module Debug Bus Registers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dtm-jtag-dtm-registers">2.5.5.2 DTM JTAG DTM Registers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#debug-module-interface-access-dmi-0x11">2.5.5.3 Debug  Module Interface Access(dmi,0x11)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bypass">2.5.5.4 BYPASS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#debug-module-control-dmcontrol-0x10">2.5.5.5 Debug Module Control (dmcontrol, 0x10)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#debug-module-status-dmstatus-at-0x11">2.5.5.6 Debug Module Status (dmstatus, at 0x11)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#abstract-control-and-status-abstractcs-at-0x16">2.5.5.7 Abstract Control and Status (abstractcs, at 0x16)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checklist">2.5.6 Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qspi.html">2.6 QSPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sram.html">2.7 SRAM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../fpga.html">3. Prototype Verificaton On FPGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend.html">4 Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device.html">5. DEVICE(SD)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">2. Hardware</a></li>
+      <li class="breadcrumb-item active">2.5 JTAG</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/pages/hardware/jtag.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="jtag">
+<h1>2.5 JTAG<a class="headerlink" href="#jtag" title="Link to this heading"></a></h1>
+<section id="jtag-technical-specification">
+<h2>2.5.1 JTAG Technical Specification<a class="headerlink" href="#jtag-technical-specification" title="Link to this heading"></a></h2>
+<p><img alt="alt text" src="../../_images/image-221.png" /></p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>JTAG (Joint Test Action Group), an international standard testing protocol conforming to IEEE 1149.1, is primarily used for internal chip testing. Many advanced devices, such as DSPs and FPGAs, support the JTAG protocol. The standard JTAG interface comprises four lines: TMS, TCK, TDI, and TDO, representing Mode Select, Clock, Data Input, and Data Output, respectively.</p>
+<p>Initially designed for chip testing, JTAG operates by defining a TAP (Test Access Port) within the device, allowing internal nodes to be tested using dedicated JTAG tools. JTAG’s unique capability enables multiple devices to be daisy-chained via the JTAG interface, forming a JTAG chain that facilitates individual device testing. Beyond testing, the JTAG interface is also commonly utilized for In-System Programming (ISP), enabling programming of components like FLASH memory.</p>
+<p>JTAG’s in-system programming approach revolutionizes traditional production flows, where chips were pre-programmed before being soldered onto boards. This method simplifies the process by allowing devices to be secured onto the board first, followed by JTAG programming, significantly accelerating project timelines. The JTAG interface can program all components within a PSD (Programmable System Device) chip.</p>
+</section>
+</section>
+<section id="theory-of-operation">
+<h2>2.5.2 Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Link to this heading"></a></h2>
+<section id="module-structure">
+<h3>2.5.2.1 Module Structure<a class="headerlink" href="#module-structure" title="Link to this heading"></a></h3>
+<p><strong>MEISHAV100 DM and JTAG Connection Diagram</strong></p>
+<p>The DM and JTAG connection diagram for MEISHAV100 is as follows:</p>
+<div align=center>  <p><img alt="alt text" src="../../_images/image-171.png" /><br />DM and JTAG Connection</p>
+<div>
+<div align=left><div>   <p>Since the project is generated by Chisel, the modules used are in accordance with the specifications of SiFive and UC Berkeley.</p>
+<p>Here, the TLDebugModule uses the Debug design from Rocket-Chip. The file location is:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>:/src/main/scala/device/debug
+<span class="p">|</span>-<span class="w"> </span>Debug.scala
+</pre></div>
+</div>
+<p>The DebugTransportModuleJTAG uses the design from the following location:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>:/src/main/scala/device/debug
+<span class="p">|</span>-<span class="w"> </span>DebugTransport.scala
+:/src/main/scala/JtagTap.scala
+<span class="p">|</span>-<span class="w"> </span>JtagTap.scala
+<span class="p">|</span>-<span class="w"> </span>JtagShifter.scala
+<span class="p">|</span>-<span class="w"> </span>JtagStateMachine.scala
+</pre></div>
+</div>
+<section id="top-module-tldebugmodule-slave">
+<h4>2.5.2.1.1 top_module: TLDebugModule (slave)<a class="headerlink" href="#top-module-tldebugmodule-slave" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>TLDebugModuleOuterAsync</strong></p>
+<ul>
+<li><p>DMIToTL</p></li>
+<li><p>TLXbar_7</p></li>
+<li><p>TLDebugModuleOuter</p></li>
+<li><p>IntSyncCrossingSource</p></li>
+<li><p>TLAsyncCrossingSource</p></li>
+<li><p>AsyncQueueSource_1</p></li>
+</ul>
+</li>
+<li><p><strong>TLDebugModuleInnerAsync</strong></p>
+<ul>
+<li><p>TLDebugModuleInner</p></li>
+<li><p>TLAsyncCrossingSink</p></li>
+<li><p>AsyncQueueSink_1</p></li>
+<li><p>AsyncQueueSource_2</p></li>
+<li><p>AsyncQueueSink_2</p></li>
+<li><p>ResetCatchAndSync_d3</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="top-module-debugtransportmodulejtag-master-s-interface">
+<h4>2.5.2.1.2 top_module: DebugTransportModuleJTAG (master’s interface)<a class="headerlink" href="#top-module-debugtransportmodulejtag-master-s-interface" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>CaptureUpdateChain (as dtmInfoChain)</p></li>
+<li><p>CaptureUpdateChain_1 (as dtmAccessChain)</p></li>
+<li><p>CaptureChain (as idcodeChain)</p></li>
+<li><p>JtagTapController</p>
+<ul>
+<li><p>JtagStateMachine</p></li>
+<li><p>CaptureUpdateChain_2 (as irChain)</p></li>
+</ul>
+</li>
+<li><p>JtagBypassChain</p></li>
+</ul>
+<p>Overall, only DR Bypass and IR are implemented, which is not related to verification.</p>
+<p>For reference, the Rocket-Chip project can be found at: <a class="reference external" href="https://github.com/chipsalliance/rocket-chip/tree/master">https://github.com/chipsalliance/rocket-chip/tree/master</a>.</p>
+</section>
+</section>
+<section id="jtag-tapc-state-machine">
+<h3>2.5.2.2 JTAG TAPC State Machine<a class="headerlink" href="#jtag-tapc-state-machine" title="Link to this heading"></a></h3>
+<p>The JTAG controller incorporates the standard TAPC state machine as depicted below, with the state machine handling clocking via TCK.</p>
+<div align=center><p><img alt="alt text" src="../../_images/image-181.png" /><br />JTAG Controller</p>
+<div>
+<div align=left><div>  </section>
+<section id="resetting-jtag-logic">
+<h3>2.5.2.3  Resetting JTAG Logic<a class="headerlink" href="#resetting-jtag-logic" title="Link to this heading"></a></h3>
+<p>Asynchronous reset of the JTAG logic must be achieved by asserting the power-on-reset signal, which drives an internal jtag_reset signal.</p>
+<p>Asserting jtag_reset will reset both the JTAG DTM and the debug module test logic. Since certain debug logic requires a synchronous reset, the jtag_reset signal is internally synchronized within the FU540-C000.</p>
+<p>During operation, the JTAG DTM logic can also be reset without involving jtag_reset by asserting jtag_TMS while issuing five jtag_TCK clock ticks. This operation only resets the JTAG DTM, not the debug module.</p>
+</section>
+<section id="jtag-clocking">
+<h3>2.4.2.4 JTAG Clocking<a class="headerlink" href="#jtag-clocking" title="Link to this heading"></a></h3>
+<p>The JTAG logic always operates within its own clock domain, which is clocked by jtag_TCK. The JTAG logic is fully static and has no minimum clock frequency requirement. The maximum jtag_TCK frequency is part-specific.</p>
+</section>
+<section id="jtag-standard-instructions">
+<h3>2.4.2.5 JTAG Standard Instructions<a class="headerlink" href="#jtag-standard-instructions" title="Link to this heading"></a></h3>
+<p>The JTAG DTM implements the BYPASS and IDCODE instructions.
+The IDCODE for the FU540-C000 is set to 0x20000913.</p>
+</section>
+<section id="jtag-debug-commands">
+<h3>2.4.2.6 JTAG Debug Commands<a class="headerlink" href="#jtag-debug-commands" title="Link to this heading"></a></h3>
+<p>The JTAG DEBUG instruction accesses the SiFive debug module by connecting the debug scan register between jtag_TDI and jtag_TDO.</p>
+</section>
+<section id="overview-of-states">
+<h3>2.4.2.7 Overview of States<a class="headerlink" href="#overview-of-states" title="Link to this heading"></a></h3>
+<p>A conceptual view is provided of the states a hart transitions through during run/halt debugging, which are influenced by various fields in dmcontrol, abstractcs, abstractauto, and command.</p>
+<div align=center><p><img alt="alt text" src="../../_images/image-191.png" /></p>
+<div>
+<div align=left><div>   </section>
+</section>
+<section id="jtag-design-verification">
+<h2>2.5.3 JTAG Design Verification<a class="headerlink" href="#jtag-design-verification" title="Link to this heading"></a></h2>
+<p><strong>Goals</strong></p>
+<p>Verify JTAG IP features by running dynamic simulations with a SV/UVM based testbench</p>
+<p><strong>Design features</strong></p>
+<p>For detailed information on JTAG design features, please see the <strong>JTAG Technical Specification</strong>.</p>
+<p><strong>Testbench architecture</strong></p>
+<p>Top level testbench is located at /trunk/hw/d2dv100_top/dv/dut_MEISHAV100_TOP_wrapper.sv. It instantiates the TOP DUT module /trunk/hw/d2dv100_top/rtl/top/MEISHAV100_TOP.sv. In addition, it instantiates the following interfaces, connects them to the DUT and sets their handle into <code class="docutils literal notranslate"><span class="pre">uvm_config_db</span></code>:</p>
+<ul class="simple">
+<li><p>Clock and reset interface</p></li>
+<li><p>Tilelink host interface</p></li>
+<li><p>JTAG IOs</p></li>
+</ul>
+<p><strong>Global types &amp; methods</strong></p>
+<p>All common types and methods defined at the package level can be found in <code class="docutils literal notranslate"><span class="pre">JTAG_env_pkg</span></code></p>
+<p><strong>TL_agent</strong></p>
+<p>JTAG Device instantiates <code class="docutils literal notranslate"><span class="pre">tl_agent</span></code> which provides the ability to drive and independently monitor random traffic via TL host interface into JTAG Device.</p>
+<p><strong>JTAG_agent</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">JTAG</span> <span class="pre">agent</span></code> is used to drive and monitor JTAG items.</p>
+<section id="testplan">
+<h3>2.5.3.1 Testplan<a class="headerlink" href="#testplan" title="Link to this heading"></a></h3>
+<section id="allocate-resources-initialize-member-variables">
+<h4>2.5.3.1.1 Allocate resources, initialize member variables.<a class="headerlink" href="#allocate-resources-initialize-member-variables" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="k">new</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">uvm_component</span><span class="w"> </span><span class="n">parent</span><span class="p">);</span>
+<span class="w">        </span><span class="k">super</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">parent</span><span class="p">);</span>
+<span class="w">        </span><span class="n">set_type_override_by_type</span><span class="p">(</span><span class="n">dv_lib_pkg</span><span class="o">::</span><span class="n">dv_base_env_cfg</span><span class="p">#(</span><span class="n">tlul_base_env_pkg</span><span class="o">::</span><span class="n">tlul_base_reg_block</span><span class="p">)</span><span class="o">::</span><span class="n">get_type</span><span class="p">(),</span><span class="w"> </span><span class="no">`tc_name_cfg</span><span class="o">::</span><span class="n">get_type</span><span class="p">());</span>
+<span class="w">        </span><span class="n">set_type_override_by_type</span><span class="p">(</span><span class="n">tlul_base_env_cfg</span><span class="o">::</span><span class="n">get_type</span><span class="p">(),</span><span class="w"> </span><span class="no">`tc_name_cfg</span><span class="o">::</span><span class="n">get_type</span><span class="p">());</span>
+<span class="w">        </span><span class="n">cfg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`tc_name_cfg</span><span class="o">::</span><span class="n">type_id</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;test_cfg&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">);</span>
+<span class="w">        </span><span class="n">jtag_base_env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jtag_env_pkg</span><span class="o">::</span><span class="n">jtag_env</span><span class="o">::</span><span class="n">type_id</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;jtag_base_env&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">);</span>
+<span class="w">        </span><span class="n">dr_seq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">(</span><span class="s">&quot;dr_seq&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">dmstatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">(</span><span class="s">&quot;dmstatus&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">dtmcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">(</span><span class="s">&quot;dtmcs&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">dmcontrol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">(</span><span class="s">&quot;dmcontrol&quot;</span><span class="p">);</span><span class="w">        </span>
+<span class="w">        </span><span class="n">dmabstractcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">(</span><span class="s">&quot;dmabstractcs&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">////uart_base_env = uart_env::type_id::create(&quot;uart_base_env&quot;, this);</span>
+<span class="w">        </span><span class="c1">////set_type_override_by_type(dv_base_scoreboard#(dv_base_reg_pkg::dv_base_reg_block,dv_base_env_cfg,dv_base_env_cov)::get_type(), spi_scoreboard::get_type());</span>
+<span class="w">    </span><span class="k">endfunction</span><span class="w"> </span><span class="c1">//new()</span>
+</pre></div>
+</div>
+</section>
+<section id="read-id-code-reading-idcode-instruction">
+<h4>2.5.3.1.2 read_id_code(Reading IDCODE instruction)<a class="headerlink" href="#read-id-code-reading-idcode-instruction" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">read_id_code</span><span class="p">();</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_ir</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">DTM_IDCODE</span><span class="p">);</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_dr</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mh">32&#39;h0000_0000</span><span class="p">});</span><span class="w">  </span><span class="c1">// randomize value  IDCODE WIDTH is 32</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="mh">32&#39;h20000913</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">rsp</span><span class="p">.</span><span class="n">dout</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="no">`uvm_error</span><span class="p">(</span><span class="s">&quot;read_id_code&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;%h not expect&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">rsp</span><span class="p">.</span><span class="n">dout</span><span class="p">))</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="read-dtmcs-reading-the-dtm-status">
+<h4>2.5.3.1.3 read_dtmcs(Reading the DTM status)<a class="headerlink" href="#read-dtmcs-reading-the-dtm-status" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">read_dtmcs</span><span class="p">();</span>
+<span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">data_array</span><span class="p">[];</span>
+<span class="k">automatic</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">6</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">abits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`DTM_ABITS</span><span class="p">;</span>
+<span class="k">automatic</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">idle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">`DTM_IDLE_DELAY_CYCLE</span><span class="p">;</span>
+<span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_ir</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">DTM_DTMCS</span><span class="p">);</span>
+<span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_dr</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mh">32&#39;h0000_0000</span><span class="p">});</span><span class="w">  </span><span class="c1">// randomize value  IDCODE WIDTH is 32</span>
+<span class="k">if</span><span class="p">({</span><span class="mh">14&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mb">1&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="mb">1&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="mb">1&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">idle</span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mb">2&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">abits</span><span class="p">[</span><span class="mi">5</span><span class="o">:</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mb">4&#39;b1</span><span class="p">}</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">rsp</span><span class="p">.</span><span class="n">dout</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="no">`uvm_error</span><span class="p">(</span><span class="s">&quot;read_dtmcs&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;%h not expect&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">rsp</span><span class="p">.</span><span class="n">dout</span><span class="p">))</span>
+<span class="k">end</span>
+<span class="c1">// data_array = new[4];</span>
+<span class="c1">// for ( int i = 0; i &lt; 4; i++ ) begin</span>
+<span class="c1">//     data_array[i] = this.dr_seq.rsp.dout[(i*8)+:8];</span>
+<span class="c1">// end</span>
+<span class="n">data_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="n">data_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">rsp</span><span class="p">.</span><span class="n">dout</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">];</span>
+<span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">unpack_ints</span><span class="p">(</span><span class="n">data_array</span><span class="p">);</span>
+<span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;read_dtmcs:</span><span class="se">\n</span><span class="s">%0s&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">sprint</span><span class="p">()),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+<span class="c1">// this.dtmcs.dmihardreset = this.dr_seq.rsp.dout[17];</span>
+<span class="c1">// this.dtmcs.dmireset = this.dr_seq.rsp.dout[16];</span>
+<span class="c1">// this.dtmcs.idle = this.dr_seq.rsp.dout[14:12];</span>
+<span class="c1">// this.dtmcs.dmistat = this.dr_seq.rsp.dout[11:10];</span>
+<span class="c1">// this.dtmcs.abits = this.dr_seq.rsp.dout[9:4];</span>
+<span class="c1">// this.dtmcs.version = this.dr_seq.rsp.dout[3:0];</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">this.dtmcs.unpack_ints(data_array);</span></code> is responsible for unpacking the integer values from the <code class="docutils literal notranslate"><span class="pre">data_array</span></code> and assigning them to the respective member variables of the <code class="docutils literal notranslate"><span class="pre">dtmcs</span></code> object.</p>
+</section>
+<section id="read-dmcontrol-reading-debug-module-control">
+<h4>2.5.3.1.4 read_dmcontrol(Reading Debug Module Control)<a class="headerlink" href="#read-dmcontrol-reading-debug-module-control" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">read_dmcontrol</span><span class="p">();</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">data_array</span><span class="p">[];</span>
+<span class="w">    </span><span class="n">dmi_read</span><span class="p">(</span><span class="n">DM_DMCONTROL</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+<span class="w">    </span><span class="n">data_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="n">data_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">unpack_ints</span><span class="p">(</span><span class="n">data_array</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;read_dmcontrol:</span><span class="se">\n</span><span class="s">%0s&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">sprint</span><span class="p">()),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="dmi-read-reading-data-via-debug-module-interface">
+<h4>2.5.3.1.5  dmi_read(Reading data via Debug Module Interface)<a class="headerlink" href="#dmi-read-reading-data-via-debug-module-interface" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">dmi_read</span><span class="p">(</span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="no">`DTM_ABITS</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="k">output</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">check_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 执行DMI读操作</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_ir</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">DTM_DMI</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// read dr more time , wait data flush complete</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_dr</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="no">`DTM_ABITS</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">34</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">address</span><span class="p">[</span><span class="no">`DTM_ABITS</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mh">32&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">2&#39;h1</span><span class="p">});</span>
+<span class="w">    </span><span class="c1">//data[31:0] = this.dr_seq.rsp.dout[33:2];</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_dr</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="no">`DTM_ABITS</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">34</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">address</span><span class="p">[</span><span class="no">`DTM_ABITS</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mh">32&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="mh">2&#39;h1</span><span class="p">});</span>
+<span class="w">    </span><span class="n">data</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">rsp</span><span class="p">.</span><span class="n">dout</span><span class="p">[</span><span class="mi">33</span><span class="o">:</span><span class="mi">2</span><span class="p">];</span>
+<span class="w">    </span><span class="c1">// this.dr_seq.send_dr(this.jtag_base_env.m_jtag_agent.sequencer, `DTM_ABITS + 34, {address[`DTM_ABITS-1:0], 32&#39;h0, 2&#39;h1});</span>
+<span class="w">    </span><span class="c1">// data[31:0] = this.dr_seq.rsp.dout[33:2];</span>
+<span class="w">    </span><span class="c1">// 等待读操作完成并检查状态</span>
+<span class="w">    </span><span class="k">do</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">check_timeout</span><span class="o">++</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="no">`uvm_fatal</span><span class="p">(</span><span class="s">&quot;dmi_read&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;timeout,address &#39;h%0h, data &#39;h%0h: dmistat %h not expect&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="p">))</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">read_dtmcs</span><span class="p">();</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">while</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">2&#39;h3</span><span class="p">);</span><span class="w"> </span><span class="c1">// repeat try once</span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mh">2&#39;h0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="no">`uvm_error</span><span class="p">(</span><span class="s">&quot;dmi_read&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;address &#39;h%0h, data &#39;h%0h: dmistat %h not expect&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="p">))</span>
+<span class="w">        </span><span class="c1">// clear status</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmireset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">1&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">write_dtmcs</span><span class="p">();</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="no">`uvm_info</span><span class="p">(</span><span class="s">&quot;dmi_read&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;address &#39;h%0h, data &#39;h%0h: success&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="read-dmstatus-reading-data-via-debug-module-interface">
+<h4>2.5.3.1.6 read_dmstatus(Reading data via Debug Module Interface)<a class="headerlink" href="#read-dmstatus-reading-data-via-debug-module-interface" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">read_dmstatus</span><span class="p">();</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">data_array</span><span class="p">[];</span>
+<span class="w">    </span><span class="n">dmi_read</span><span class="p">(</span><span class="n">DM_DMSTATUS</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// data_array = new[4];</span>
+<span class="w">    </span><span class="c1">// for ( int i = 0; i &lt; 4; i++ ) begin</span>
+<span class="w">    </span><span class="c1">//     data_array[i] = data[(i*8)+:8];</span>
+<span class="w">    </span><span class="c1">// end</span>
+<span class="w">    </span><span class="n">data_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="n">data_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dmstatus</span><span class="p">.</span><span class="n">unpack_ints</span><span class="p">(</span><span class="n">data_array</span><span class="p">);</span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;read_dmstatus:</span><span class="se">\n</span><span class="s">%0s&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dmstatus</span><span class="p">.</span><span class="n">sprint</span><span class="p">()),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="write-dmcontrol-writing-debug-module-control">
+<h4>2.5.3.1.7 write_dmcontrol（Writing Debug Module Control）<a class="headerlink" href="#write-dmcontrol-writing-debug-module-control" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">write_dmcontrol</span><span class="p">();</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">data_array</span><span class="p">[];</span>
+<span class="w">    </span><span class="n">data_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">pack_ints</span><span class="p">(</span><span class="n">data_array</span><span class="p">);</span>
+<span class="w">    </span><span class="n">dmi_write</span><span class="p">(</span><span class="n">DM_DMCONTROL</span><span class="p">,</span><span class="w"> </span><span class="n">data_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;write_dmcontrol:</span><span class="se">\n</span><span class="s">%0s&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">sprint</span><span class="p">()),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="dmi-write-writing-data-via-debug-module-interface">
+<h4>2.5.3.1.8 dmi_write(Writing data via Debug Module Interface)<a class="headerlink" href="#dmi-write-writing-data-via-debug-module-interface" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">dmi_write</span><span class="p">(</span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="no">`DTM_ABITS</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="k">input</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">check_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 执行DMI写操作</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_ir</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">DTM_DMI</span><span class="p">);</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dr_seq</span><span class="p">.</span><span class="n">send_dr</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">jtag_base_env</span><span class="p">.</span><span class="n">m_jtag_agent</span><span class="p">.</span><span class="n">sequencer</span><span class="p">,</span><span class="w"> </span><span class="no">`DTM_ABITS</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">34</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">address</span><span class="p">[</span><span class="no">`DTM_ABITS</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mh">2&#39;h2</span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// 等待写操作完成并检查状态</span>
+<span class="w">    </span><span class="k">do</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">check_timeout</span><span class="o">++</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="no">`uvm_fatal</span><span class="p">(</span><span class="s">&quot;dmi_write&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;timeout,address &#39;h%0h, data &#39;h%0h: dmistat %h not expect&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="p">))</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">read_dtmcs</span><span class="p">();</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">while</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">2&#39;h3</span><span class="p">);</span><span class="w"> </span><span class="c1">// repeat try once</span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mh">2&#39;h0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="no">`uvm_error</span><span class="p">(</span><span class="s">&quot;dmi_write&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;address &#39;h%0h, data &#39;h%0h: dmistat %h not expect&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dtmcs</span><span class="p">.</span><span class="n">dmistat</span><span class="p">))</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">write_dtmcs</span><span class="p">();</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="no">`uvm_info</span><span class="p">(</span><span class="s">&quot;dmi_write&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;address &#39;h%0h, data &#39;h%0h: success&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="read-dmabstractcs-reading-abstract-control-and-status">
+<h4>2.5.3.1.9 read_dmabstractcs(Reading Abstract Control and Status)<a class="headerlink" href="#read-dmabstractcs-reading-abstract-control-and-status" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">read_dmabstractcs</span><span class="p">();</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">data_array</span><span class="p">[];</span>
+<span class="w">    </span><span class="n">dmi_read</span><span class="p">(</span><span class="n">DM_ABS_CS</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
+<span class="w">    </span><span class="n">data_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="n">data_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">dmabstractcs</span><span class="p">.</span><span class="n">unpack_ints</span><span class="p">(</span><span class="n">data_array</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;dmabstractcs:</span><span class="se">\n</span><span class="s">%0s&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">dmabstractcs</span><span class="p">.</span><span class="n">sprint</span><span class="p">()),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="execute-progbuf-setting-buffer-area-progbufsize">
+<h4>2.5.3.1.10  execute_progbuf(Setting buffer area progbufsize)<a class="headerlink" href="#execute-progbuf-setting-buffer-area-progbufsize" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">execute_progbuf</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">write_dmabstract_cmd</span><span class="p">(</span><span class="mh">8&#39;h1</span><span class="p">,</span><span class="w"> </span><span class="mh">24&#39;h0</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;execute_progbuf&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="access-hart-reg">
+<h4>2.5.3.1.11 access_hart_reg<a class="headerlink" href="#access-hart-reg" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">access_hart_reg</span><span class="p">(</span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">aarsize</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="n">aarpostincrement</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="n">postexec</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="n">transfer</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">15</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">regno</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">write_dmabstract_cmd</span><span class="p">(</span><span class="mh">8&#39;h0</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mb">1&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">aarsize</span><span class="p">,</span><span class="w"> </span><span class="n">aarpostincrement</span><span class="p">,</span><span class="w"> </span><span class="n">postexec</span><span class="p">,</span><span class="w"> </span><span class="n">transfer</span><span class="p">,</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="n">regno</span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;access_hart_reg: &#39;h%0h, &#39;h%0h, &#39;h%0h, &#39;h%0h, &#39;h%0h, &#39;h%0h&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">aarsize</span><span class="p">,</span><span class="w"> </span><span class="n">aarpostincrement</span><span class="p">,</span><span class="w"> </span><span class="n">postexec</span><span class="p">,</span><span class="w"> </span><span class="n">transfer</span><span class="p">,</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="n">regno</span><span class="p">),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="access-hart-mem">
+<h4>2.5.3.1.12 access_hart_mem<a class="headerlink" href="#access-hart-mem" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">access_hart_mem</span><span class="p">(</span><span class="kt">bit</span><span class="w"> </span><span class="n">aamvirtual</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">aamsize</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="n">aampostincrement</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">target_specific</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">write_dmabstract_cmd</span><span class="p">(</span><span class="mh">8&#39;h2</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">aamvirtual</span><span class="p">,</span><span class="w"> </span><span class="n">aamsize</span><span class="p">,</span><span class="w"> </span><span class="n">aampostincrement</span><span class="p">,</span><span class="w"> </span><span class="mb">2&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="n">target_specific</span><span class="p">,</span><span class="w"> </span><span class="mh">14&#39;h0</span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;access_hart_mem: &#39;h%0h, &#39;h%0h, &#39;h%0h, &#39;h%0h, &#39;h%0h&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">aamvirtual</span><span class="p">,</span><span class="w"> </span><span class="n">aamsize</span><span class="p">,</span><span class="w"> </span><span class="n">aampostincrement</span><span class="p">,</span><span class="w"> </span><span class="n">write</span><span class="p">,</span><span class="w"> </span><span class="n">target_specific</span><span class="p">),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="write-dmabstract-cmd">
+<h4>2.5.3.1.13 write_dmabstract_cmd<a class="headerlink" href="#write-dmabstract-cmd" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">virtual</span><span class="w"> </span><span class="k">task</span><span class="w"> </span><span class="n">write_dmabstract_cmd</span><span class="p">(</span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">7</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">cmdtype</span><span class="p">,</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">23</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">control</span><span class="p">);</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">bit</span><span class="w"> </span><span class="p">[</span><span class="mi">31</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">automatic</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">data_array</span><span class="p">[];</span>
+<span class="w">    </span><span class="n">data_array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="n">data_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">cmdtype</span><span class="p">,</span><span class="w"> </span><span class="n">control</span><span class="p">};</span>
+<span class="w">    </span><span class="n">dmi_write</span><span class="p">(</span><span class="n">DM_ABS_CMD</span><span class="p">,</span><span class="w"> </span><span class="n">data_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="no">`uvm_info</span><span class="p">(</span><span class="no">`gfn</span><span class="p">,</span><span class="w"> </span><span class="p">$</span><span class="n">sformatf</span><span class="p">(</span><span class="s">&quot;write_dmabstract_cmd: &#39;h%0h, &#39;h%0h&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">cmdtype</span><span class="p">,</span><span class="w"> </span><span class="n">control</span><span class="p">),</span><span class="w"> </span><span class="n">UVM_LOW</span><span class="p">)</span>
+
+<span class="k">endtask</span>
+</pre></div>
+</div>
+</section>
+<section id="the-program-is-running">
+<h4>2.5.3.1.14 The program is running.<a class="headerlink" href="#the-program-is-running" title="Link to this heading"></a></h4>
+<div class="highlight-systemverilog notranslate"><div class="highlight"><pre><span></span><span class="k">begin</span><span class="w"> </span>
+<span class="w">        </span><span class="n">read_id_code</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//#5000ns;</span>
+<span class="w">        </span><span class="n">read_dtmcs</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//#5000ns;</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">read_dmcontrol</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//#5000ns;</span>
+<span class="w">        </span><span class="n">read_dmstatus</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//#5000ns;</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// halt all cpu</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">haltreq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">1&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">hasel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">1&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">hartsello</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">10&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">dmcontrol</span><span class="p">.</span><span class="n">dmactive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">1&#39;b1</span><span class="p">;</span><span class="w"> </span><span class="c1">// must be 1 for debug</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">write_dmcontrol</span><span class="p">();</span>
+<span class="w">        </span><span class="p">#</span><span class="mi">5</span><span class="n">us</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">write_dmcontrol</span><span class="p">();</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// test abstract cmd</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">read_dmabstractcs</span><span class="p">();</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">access_hart_reg</span><span class="p">(</span><span class="mi">2</span><span class="cm">/*aarsize*/</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="cm">/*aarpostincrement*/</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="cm">/*postexec*/</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="cm">/*transfer*/</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="cm">/*write*/</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="cm">/*regno*/</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">access_hart_mem</span><span class="p">(</span><span class="mi">0</span><span class="cm">/*aamvirtual*/</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="cm">/*aamsize*/</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="cm">/*aampostincrement*/</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="cm">/*write*/</span><span class="p">,</span><span class="w"> </span><span class="mb">2&#39;b0</span><span class="cm">/*target_specific*/</span><span class="p">);</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="n">execute_progbuf</span><span class="p">();</span>
+<span class="w">    </span><span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="fpga-verification-via-openocd">
+<h4>FPGA Verification Via OpenOCD<a class="headerlink" href="#fpga-verification-via-openocd" title="Link to this heading"></a></h4>
+<p>Users interact with the debugging host (such as a laptop) running a debugger (such as GDB). The debugger communicates with the debug adapter (for example, <strong>OpenOCD</strong>, which may include a hardware driver) to interface with the debug transport hardware (such as an Olimex USB-JTAG adapter). The debug transport hardware connects the debug host to the platform’s Debug Transport Module (DTM). The DTM uses the Debug Module Interface (DMI) to provide access to one or more Debug Modules (DM).</p>
+<p>To stop one or more harts, the debugger selects them, sets haltreq, and then waits for the allhalted indication that the harts have stopped. It can then clear haltreq to 0, or keep it high to catch harts that reset while paused.</p>
+<p>The platform is a single integrated circuit composed of one or more components. Some components may be RISC-V cores, while others may have different functions. Typically, they will all be connected to a single system bus. A single RISC-V core contains one or more hardware threads, called harts.</p>
+</section>
+</section>
+</section>
+<section id="hardware-interfaces">
+<h2>2.5.4 Hardware Interfaces<a class="headerlink" href="#hardware-interfaces" title="Link to this heading"></a></h2>
+<p>The mapping of top-level JTAG signals in the U500 module is represented in the following table:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">JTAG Singal</th>
+<th style="text-align: center;">Top JTAG Singal</th>
+<th style="text-align: center;">I/O</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">TCK</td>
+<td style="text-align: center;">jtag_jtag_TCK</td>
+<td style="text-align: center;">input</td>
+</tr>
+<tr>
+<td style="text-align: center;">TMS</td>
+<td style="text-align: center;">jtag_jtag_TMS</td>
+<td style="text-align: center;">input</td>
+</tr>
+<tr>
+<td style="text-align: center;">TDI</td>
+<td style="text-align: center;">jtag_jtag_TDI</td>
+<td style="text-align: center;">input</td>
+</tr>
+<tr>
+<td style="text-align: center;">TDO</td>
+<td style="text-align: center;">jtag_jtag_TDO</td>
+<td style="text-align: center;">output</td>
+</tr>
+</tbody>
+</table></section>
+<section id="registers">
+<h2>2.5.5 Registers<a class="headerlink" href="#registers" title="Link to this heading"></a></h2>
+<section id="debug-module-debug-bus-registers">
+<h3>2.5.5.1 Debug Module Debug Bus Registers<a class="headerlink" href="#debug-module-debug-bus-registers" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Address</th>
+<th style="text-align: center;">Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x04</td>
+<td style="text-align: center;">Abstract Data 0 (data0)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x0f</td>
+<td style="text-align: center;">Abstract Data 11 (data11)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x10</td>
+<td style="text-align: center;">Debug Module Control (dmcontrol)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x11</td>
+<td style="text-align: center;">Debug Module Status (dmstatus)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x12</td>
+<td style="text-align: center;">Hart Info (hartinfo)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x13</td>
+<td style="text-align: center;">Halt Summary 1 (haltsum1)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x14</td>
+<td style="text-align: center;">Hart Array Window Select (hawindowsel)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x15</td>
+<td style="text-align: center;">Hart Array Window (hawindow)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x16</td>
+<td style="text-align: center;">Abstract Control and Status (abstractcs)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x17</td>
+<td style="text-align: center;">Abstract Command (command)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x18</td>
+<td style="text-align: center;">Abstract Command Autoexec (abstractauto)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x19</td>
+<td style="text-align: center;">Configuration String Pointer 0 (confstrptr0)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x1a</td>
+<td style="text-align: center;">Configuration String Pointer 1 (confstrptr1)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x1b</td>
+<td style="text-align: center;">Configuration String Pointer 2 (confstrptr2)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x1c</td>
+<td style="text-align: center;">Configuration String Pointer 3 (confstrptr3)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x1d</td>
+<td style="text-align: center;">Next Debug Module (nextdm)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x20</td>
+<td style="text-align: center;">Program Buffer 0 (progbuf0)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x2f</td>
+<td style="text-align: center;">Program Buffer 15 (progbuf15)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x30</td>
+<td style="text-align: center;">Authentication Data (authdata)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x34</td>
+<td style="text-align: center;">Halt Summary 2 (haltsum2)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x35</td>
+<td style="text-align: center;">Halt Summary 3 (haltsum3)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x37</td>
+<td style="text-align: center;">System Bus Address 127:96 (sbaddress3)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x38</td>
+<td style="text-align: center;">System Bus Access Control and Status (sbcs)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x39</td>
+<td style="text-align: center;">System Bus Address 31:0 (sbaddress0)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x3a</td>
+<td style="text-align: center;">System Bus Address 63:32 (sbaddress1)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x3b</td>
+<td style="text-align: center;">System Bus Address 95:64 (sbaddress2)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x3c</td>
+<td style="text-align: center;">System Bus Data 31:0 (sbdata0)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x3d</td>
+<td style="text-align: center;">System Bus Data 63:32 (sbdata1)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x3e</td>
+<td style="text-align: center;">System Bus Data 95:64 (sbdata2)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x3f</td>
+<td style="text-align: center;">System Bus Data 127:96 (sbdata3)</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x40</td>
+<td style="text-align: center;">Halt Summary 0 (haltsum0)</td>
+</tr>
+</tbody>
+</table></section>
+<section id="dtm-jtag-dtm-registers">
+<h3>2.5.5.2 DTM JTAG DTM Registers<a class="headerlink" href="#dtm-jtag-dtm-registers" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Address</th>
+<th style="text-align: center;">Name</th>
+<th style="text-align: center;">Descripition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x00</td>
+<td style="text-align: center;">BYPASS</td>
+<td style="text-align: center;">JTAG recommends this encoding</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x01</td>
+<td style="text-align: center;">IDCODE</td>
+<td style="text-align: center;">JTAG recommends this encoding</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x10</td>
+<td style="text-align: center;">DTM Control and Status (dtmcs)</td>
+<td style="text-align: center;">For Debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x11</td>
+<td style="text-align: center;">Debug Module Interface Access (dmi)</td>
+<td style="text-align: center;">For Debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x12</td>
+<td style="text-align: center;">Reserved (BYPASS)</td>
+<td style="text-align: center;">Reserved for future RISC-V debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x13</td>
+<td style="text-align: center;">Reserved (BYPASS)</td>
+<td style="text-align: center;">Reserved for future RISC-V debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x14</td>
+<td style="text-align: center;">Reserved (BYPASS)</td>
+<td style="text-align: center;">Reserved for future RISC-V debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x15</td>
+<td style="text-align: center;">Reserved (BYPASS)</td>
+<td style="text-align: center;">Reserved for future RISC-V debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x16</td>
+<td style="text-align: center;">Reserved (BYPASS)</td>
+<td style="text-align: center;">Reserved for future RISC-V debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x17</td>
+<td style="text-align: center;">Reserved (BYPASS)</td>
+<td style="text-align: center;">Reserved for future RISC-V debugging</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x1f</td>
+<td style="text-align: center;">BYPASS</td>
+<td style="text-align: center;">JTAG requires this encoding</td>
+</tr>
+</tbody>
+</table><section id="idcode-0x01">
+<h4>2.5.5.2.1 IDCODE(0X01)<a class="headerlink" href="#idcode-0x01" title="Link to this heading"></a></h4>
+<p>When the TAP state machine is reset, this register (located in the Instruction Register, IR) is selected. Its definition is exactly consistent with that specified in the IEEE Standard 1149.1-2013.</p>
+<p>This entire register is read-only.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">31:28</th>
+<th style="text-align: center;">27:12</th>
+<th style="text-align: center;">11:1</th>
+<th style="text-align: center;">0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">vERSION</td>
+<td style="text-align: center;">pARTnUMBER</td>
+<td style="text-align: center;">mANUFLD</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table><p><strong>ManufId:</strong> Bits 6:0 must be the bits 6:0 of the design/manufacturer identification code specified by the JEDEC standard JEP106. Bits 10:7 contain the modulo-16 count of the continuation characters (0x7f) in the same identification code.</p>
+</section>
+<section id="dtm-control-and-status-dtmcs-0x10">
+<h4>2.5.5.2.2  DTM Control and Status (dtmcs，0x10)<a class="headerlink" href="#dtm-control-and-status-dtmcs-0x10" title="Link to this heading"></a></h4>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">31:18</th>
+<th style="text-align: center;">17</th>
+<th style="text-align: center;">16</th>
+<th style="text-align: center;">15</th>
+<th style="text-align: center;">14:12</th>
+<th style="text-align: center;">11:10</th>
+<th style="text-align: center;">9:4</th>
+<th style="text-align: center;">3:0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">dmihardreset</td>
+<td style="text-align: center;">dmireset</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">idle</td>
+<td style="text-align: center;">dmistat</td>
+<td style="text-align: center;">abits</td>
+<td style="text-align: center;">version</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: center;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">dmihardreset</td>
+<td style="text-align: left;">Writing a 1 to this bit performs a hard reset on the DTM, causing it to forget any ongoing DMI transactions. This should generally only be used when the debugger has reason to expect that the ongoing DMI transactions will never complete (e.g., reset conditions cause an in-progress DMI transaction to be aborted).</td>
+<td style="text-align: center;">W</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">dmireset</td>
+<td style="text-align: left;">Writing a 1 to this bit clears the error state and allows the DTM to retry or complete the previous transaction.</td>
+<td style="text-align: center;">W</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">idle</td>
+<td style="text-align: left;">This is a hint to the debugger regarding the minimum number of cycles it should spend in RunTest/Idle after each DMI scan to avoid returning the 'busy' code (dmistat is 3). The debugger must still check dmistat as necessary.  0: No need to enter Run-Test/Idle.   1: Enter Run-Test/Idle and exit immediately. 2: Enter Run-Test/Idle, stay for 1 cycle, then leave.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset</td>
+</tr>
+<tr>
+<td style="text-align: center;">dmistat</td>
+<td style="text-align: left;">0: No error. 1: Reserved. Interpretation is the same as for 2. 2: Operation failed (caused by op (2)). 3: Attempted operation while a DMI access is still in progress (caused by op (3)).</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">abits</td>
+<td style="text-align: left;">The size of the address in dmi.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset</td>
+</tr>
+<tr>
+<td style="text-align: center;">version</td>
+<td style="text-align: left;">0: Version described in specification version 0.11. 1: Version described in specification version 0.13. 15: Version not described in any available version of this specification.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="debug-module-interface-access-dmi-0x11">
+<h3>2.5.5.3 Debug  Module Interface Access(dmi,0x11)<a class="headerlink" href="#debug-module-interface-access-dmi-0x11" title="Link to this heading"></a></h3>
+<p>The Debug Module is subordinate to a bus known as the Debug Module Interface (DMI). The master of this bus is the Debug Transport Module (DTM). The Debug Module Interface can be a simple bus with a master and a slave, or it can utilize a more comprehensive bus, such as TileLink or AMBA Advanced Peripheral Bus. The details are left to the system designer.</p>
+<p>DMI uses <strong>7 to 32 address bits</strong>. It supports <strong>read and write</strong> operations. The bottom of the address space is used for the first (often the only) DM. Additional space can be used for custom debug devices, other cores, additional DMs, etc. If there are additional DMs on this DMI, the base address of the next DM in the DMI address space is given in <code class="docutils literal notranslate"><span class="pre">nextdm</span></code>.</p>
+<p>The Debug Module is controlled by accessing its DMI address space through registers.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: center;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">address</td>
+<td style="text-align: left;">The address used for DMI access. This value is used for accessing the DM via DMI during Update-DR.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">data</td>
+<td style="text-align: left;">The data sent to the DM via DMI during Update-DR, and the data returned by the DM after a previous operation.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">op</td>
+<td style="text-align: left;">When the debugger writes this byte, the meanings are as follows: 0: Ignore data and address. Do not send anything via DMI during Update-DR. This operation will never result in a busy or error response. The address and data reported by the following Capture-DR are undefined. 1: Read from address. (Read) 2: Write data to address. (Write) 3: Reserved.</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table><p>When the debugger reads this byte, it indicates:<br />0: The previous operation was successfully completed.<br />1: Reserved.<br />2: The previous operation failed. The data scanned into dmi during this access will be ignored. This state is sticky and can be cleared by writing <code class="docutils literal notranslate"><span class="pre">dmireset</span></code> in <code class="docutils literal notranslate"><span class="pre">dtmcs</span></code>. This indicates that the DM itself responded with an error. There is no specific case for a DM to respond with an error, and DMI does not need to support returning an error.<br />3: An operation was attempted while a DMI request was still in progress. The data scanned into dmi during this access will be ignored. This state is sticky and can be cleared by writing <code class="docutils literal notranslate"><span class="pre">dmireset</span></code> in <code class="docutils literal notranslate"><span class="pre">dtmcs</span></code>. If the debugger sees this state, it needs to provide more TCK edges to the target between UpdateDR and Capture-DR. The simplest method is to add extra transitions in Run-Test/Idle.</p>
+<p>To read an arbitrary Debug Module register, select dmi, scan a value with <code class="docutils literal notranslate"><span class="pre">op</span></code> set to 1, and set the address to the desired register address. During Update-DR, the operation will start, and the result of the operation will be captured as data during Capture-DR. If the operation does not complete in time, <code class="docutils literal notranslate"><span class="pre">op</span></code> will be 3, and the value in <code class="docutils literal notranslate"><span class="pre">data</span></code> must be ignored. The busy state must be cleared by writing <code class="docutils literal notranslate"><span class="pre">dmireset</span></code> in <code class="docutils literal notranslate"><span class="pre">dtmcs</span></code>, and a second scan must be performed. This process must be repeated until <code class="docutils literal notranslate"><span class="pre">op</span></code> returns 0. In subsequent operations, the debugger should allow more time between Capture-DR and Update-DR.</p>
+<p>To write an arbitrary Debug Module register, select dmi, scan a value with <code class="docutils literal notranslate"><span class="pre">op</span></code> set to 2, and set the address and data to the desired register address and data, respectively. From that point on, everything is exactly the same as for a read, except that a write is performed instead of a read.</p>
+<p>There is almost no need to scan the IR, thus avoiding most of the inefficiencies in typical JTAG usage.</p>
+</section>
+<section id="bypass">
+<h3>2.5.5.4 BYPASS<a class="headerlink" href="#bypass" title="Link to this heading"></a></h3>
+<p>This is an invalid 1-bit register, used when the debugger does not wish to communicate with this TAP. The entire register is read-only.</p>
+</section>
+<section id="debug-module-control-dmcontrol-0x10">
+<h3>2.5.5.5 Debug Module Control (dmcontrol, 0x10)<a class="headerlink" href="#debug-module-control-dmcontrol-0x10" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">31</th>
+<th style="text-align: center;">30</th>
+<th style="text-align: center;">29</th>
+<th style="text-align: center;">28</th>
+<th style="text-align: center;">27</th>
+<th style="text-align: center;">26</th>
+<th style="text-align: center;">25:16</th>
+<th style="text-align: center;">15:6</th>
+<th style="text-align: center;">5:4</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">haltreq</td>
+<td style="text-align: center;">resumereq</td>
+<td style="text-align: center;">hartreset</td>
+<td style="text-align: center;">ackhavereset</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">hasel</td>
+<td style="text-align: center;">hartsello</td>
+<td style="text-align: center;">hartselhi</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">setresethaltreq</td>
+<td style="text-align: center;">clrresethaltreq</td>
+<td style="text-align: center;">ndmreset</td>
+<td style="text-align: center;">dmactive</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: center;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">haltreq</td>
+<td style="text-align: left;">Writing a 0 clears the halt request bit for all currently selected harts, potentially canceling outstanding halt requests for those harts. Writing a 1 sets the halt request bit for all currently selected harts. Running harts will stop when their halt request bit is set. The write applies to the new values of hartsel and hasel.</td>
+<td style="text-align: center;">W</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">resumereq</td>
+<td style="text-align: left;">Writing a 1 will cause them to resume once if the currently selected harts are stopped at the time of the write operation. If haltreq is set, resumereq is ignored. The write applies to the new values of hartsel and hasel.</td>
+<td style="text-align: center;">W</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">hartreset</td>
+<td style="text-align: left;">This optional bit writes the reset bit for all currently selected harts. To perform a reset, the debugger writes a 1, followed by a 0 to cancel the reset signal. While this bit is 1, the debugger cannot change the selected hart. If this feature is not implemented, the bit always remains 0, so the debugger can write 1 and then read the register to see if it is supported.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">ackhavereset</td>
+<td style="text-align: left;">0: Invalid. 1: Clears the havereset bit for any selected hart. The write applies to the new values of hartsel and hasel.</td>
+<td style="text-align: center;">W1</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">hasel</td>
+<td style="text-align: left;">0: There is currently one hart selected by hartsel. 1: There may be multiple harts currently selected, consisting of the hart selected by hartsel, plus any harts selected by the hart mask register.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">hartsello</td>
+<td style="text-align: left;">The lower 10 bits of hartsel: The dm-specific index of the hart to be selected. This hart is always part of the currently selected hart.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">hartselhi</td>
+<td style="text-align: left;">The upper 10 bits of hartsel: The dm-specific index of the hart to be selected. This hart is always part of the currently selected hart.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">setresethaltreq</td>
+<td style="text-align: left;">This optional bit writes the reset halt request bit for all currently selected harts unless clrresethaltreq is set to 1 at the same time. When set to 1, each selected hart will stop on the next reset. The reset request bit does not clear automatically. The debugger must write clrresethaltreq to clear it. The write applies to the new values of hartsel and hasel. hasresethaltreq = 0 indicates that this byte is not implemented.</td>
+<td style="text-align: center;">W1</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">clrresethaltreq</td>
+<td style="text-align: left;">This optional bit clears the reset request bit for all currently selected harts. The write applies to the new values of hartsel and hasel.</td>
+<td style="text-align: center;">W1</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">ndmreset</td>
+<td style="text-align: left;">This bit controls the reset signal from the DM to the rest of the system. The signal should reset every part of the system, including each hart, except for the DM and any logic required to access the DM. To perform a system reset, the debugger writes a 1, followed by a 0 to cancel the reset.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">dmactive</td>
+<td style="text-align: left;">This bit acts as a reset signal for the debug module itself. 0: The module is in its reset state, including the authentication mechanism, with the exception of dynamic bits, which are the only bits that can be written to something other than their reset value. 1: The module is functioning normally.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table></section>
+<section id="debug-module-status-dmstatus-at-0x11">
+<h3>2.5.5.6 Debug Module Status (dmstatus, at 0x11)<a class="headerlink" href="#debug-module-status-dmstatus-at-0x11" title="Link to this heading"></a></h3>
+<p>This register reports the status of the entire debug module and the currently selected hart as defined in <code class="docutils literal notranslate"><span class="pre">hasel</span></code>. Its address will not change in the future because it contains version information.</p>
+<p>The entire register is read-only.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">31:23</th>
+<th style="text-align: center;">22</th>
+<th style="text-align: center;">21:20</th>
+<th style="text-align: center;">19</th>
+<th style="text-align: center;">18</th>
+<th style="text-align: center;">17</th>
+<th style="text-align: center;">16</th>
+<th style="text-align: center;">15</th>
+<th style="text-align: center;">14</th>
+<th style="text-align: center;">13</th>
+<th style="text-align: center;">12</th>
+<th style="text-align: center;">11</th>
+<th style="text-align: center;">10</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;">8</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">3:0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">impebreak</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">allhavereset</td>
+<td style="text-align: center;">anyhavereset</td>
+<td style="text-align: center;">allresumeack</td>
+<td style="text-align: center;">anyresumeack</td>
+<td style="text-align: center;">allnonexistent</td>
+<td style="text-align: center;">anynonexistent</td>
+<td style="text-align: center;">allunavail</td>
+<td style="text-align: center;">anyunavail</td>
+<td style="text-align: center;">allrunning</td>
+<td style="text-align: center;">anyrunning</td>
+<td style="text-align: center;">allhalted</td>
+<td style="text-align: center;">anyhalted</td>
+<td style="text-align: center;">authenticated</td>
+<td style="text-align: center;">authbusy</td>
+<td style="text-align: center;">hasresethaltreq</td>
+<td style="text-align: center;">confstrptrvalid</td>
+<td style="text-align: center;">version</td>
+</tr>
+</tbody>
+</table><table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: center;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">impebreak</td>
+<td style="text-align: left;">If set to 1, there is an implicit ebreak instruction at a non-existent word following the program buffer. This allows the debugger to avoid writing ebreak itself and allows the program buffer to be one word shorter. When proprobussize is 1, this value must be 1.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset</td>
+</tr>
+<tr>
+<td style="text-align: center;">allhavereset</td>
+<td style="text-align: left;">This bit is 1 when all currently selected harts have been reset and the reset has not been acknowledged.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">anyhavereset</td>
+<td style="text-align: left;">This bit is 1 when at least one currently selected hart has been reset and that hart has not acknowledged the reset.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">allresumeack</td>
+<td style="text-align: left;">This bit is 1 when all currently selected harts have acknowledged their last resume request.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">anyresumeack</td>
+<td style="text-align: left;">This bit is 1 when any currently selected hart has acknowledged its last resume request.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">allnonexistent</td>
+<td style="text-align: left;">This bit is 1 when the currently selected harts do not exist in this platform.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">anynonexistent</td>
+<td style="text-align: left;">This bit is 1 when the currently selected harts do not exist in this platform.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">allunavail</td>
+<td style="text-align: left;">This bit is 1 when all currently selected harts are unavailable.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">anyunavail</td>
+<td style="text-align: left;">This bit is 1 when any currently selected hart is unavailable.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">allrunning</td>
+<td style="text-align: left;">This bit is 1 when all currently selected harts are running.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">anyrunning</td>
+<td style="text-align: left;">This bit is 1 when any currently selected hart is running.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">allhalted</td>
+<td style="text-align: left;">This bit is 1 when all currently selected harts are halted.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">anyhalted</td>
+<td style="text-align: left;">This bit is 1 when any currently selected hart is halted.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td style="text-align: center;">authenticated</td>
+<td style="text-align: left;">0: Authentication is required before using the DM. 1: Authentication check passed.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset</td>
+</tr>
+<tr>
+<td style="text-align: center;">authbusy</td>
+<td style="text-align: left;">0: The authentication module is ready to process the next read of authdata. 1: The authentication module is busy. Accessing authdata will result in unspecified behavior.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">hasresethaltreq</td>
+<td style="text-align: left;">1: If this debug module supports the reset-halt feature controlled by setresethaltreq and clrresethaltreq bits. 0: Otherwise.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset</td>
+</tr>
+<tr>
+<td style="text-align: center;">confstrptrvalid</td>
+<td style="text-align: left;">0: confstrptr0{confstrptr3 stores information unrelated to the configuration string. 1: confstrptr0{confstrptr3 stores the address of the configuration string.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset</td>
+</tr>
+<tr>
+<td style="text-align: center;">version</td>
+<td style="text-align: left;">0: No debug module exists. 1: There is a debug module that complies with version 0.11 of this specification. 2: There is a debug module that complies with version 0.13 of this specification. 3: There is a debug module, but it does not comply with any available version of this specification.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></section>
+<section id="abstract-control-and-status-abstractcs-at-0x16">
+<h3>2.5.5.7 Abstract Control and Status (abstractcs, at 0x16)<a class="headerlink" href="#abstract-control-and-status-abstractcs-at-0x16" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">31：29</th>
+<th style="text-align: center;">28：24</th>
+<th style="text-align: center;">23:13</th>
+<th style="text-align: center;">12</th>
+<th style="text-align: center;">11</th>
+<th style="text-align: center;">10:8</th>
+<th style="text-align: center;">7:4</th>
+<th style="text-align: center;">3:0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">progbufsize</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">busy</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">cmderr</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">datacount</td>
+</tr>
+</tbody>
+</table><p>Sure, here is the professional English translation of the provided table:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: center;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">progbufsize</td>
+<td style="text-align: left;">Size of the program buffer, represented in 32-bit words. Valid sizes range from 0 to 16.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset</td>
+</tr>
+<tr>
+<td style="text-align: center;">busy</td>
+<td style="text-align: left;">1: Indicates that an abstract command is currently being executed. This bit is set immediately when the command is written and is cleared only after the command has completed.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">cmderr</td>
+<td style="text-align: left;">Captures if an abstract command fails. The bits in this byte remain unchanged until they are cleared by writing 1 to them. No abstract command will be initiated until this value is reset to 0. This byte contains a valid value only when busy is 0. 0 (none): No error. 1 (busy): An abstract command is being executed when either command, abstractcs, or abstractauto is written, or when one of the data or program registers is read or written. This status can only be written when cmderr contains 0. 2 (not supported): The requested command is not supported, regardless of whether the hart is running or not. 3 (exception): An exception occurred during the execution of the command (e.g., while executing the program buffer). 4 (halt/resume): The abstract command cannot be executed because the hart is not in the required state (running/stopped) or is unavailable. 5 (bus): The abstract command failed due to a bus error (e.g., alignment, access size, or timeout). 7 (other): The command failed for other reasons.</td>
+<td style="text-align: center;">R/W1C</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">datacount</td>
+<td style="text-align: left;">The number of data registers implemented as part of the abstract command interface. Valid lengths range from 1 to 12.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">Preset-</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="checklist">
+<h2>2.5.6 Checklist<a class="headerlink" href="#checklist" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="spi.html" class="btn btn-neutral float-left" title="2.4 SPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qspi.html" class="btn btn-neutral float-right" title="2.6 QSPI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

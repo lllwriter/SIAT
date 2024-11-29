@@ -1,0 +1,620 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.3 UART &mdash; SIAT  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.4 SPI" href="spi.html" />
+    <link rel="prev" title="2.2 GPIO" href="gpio.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SIAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">MEISHAV100:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../start.html">1. START</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Hardware</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Overview.html">2.1 OVERVIEW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gpio.html">2.2 GPIO</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.3 UART</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uart-technical-specification">2.3.1 UART Technical Specification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#features">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theory-of-operation">2.3.2 Theory of Operation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#communication-protoco">Communication Protoco</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transmission">Transmission</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reception">Reception</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#design-verification">2.3.3 Design Verification</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#testplan">2.3.3.1 Testplan</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-interfaces">2.3.4 Hardware Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registers">2.3.5 Registers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#control-register">Control Register</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#baud-rate-divisor-register-div">Baud Rate Divisor Register(div)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transmit-data-register-txdata">Transmit Data Register (txdata)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#receive-data-register-rxdata">Receive Data Register (rxdata)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#interrupt-registers-ip-and-ie">Interrupt Registers (ip and ie)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checklist">2.3.6 Checklist</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#design-checklist">Design Checklist</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#verification-checklist">Verification Checklist</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="spi.html">2.4 SPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag.html">2.5 JTAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qspi.html">2.6 QSPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sram.html">2.7 SRAM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../fpga.html">3. Prototype Verificaton On FPGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../backend.html">4 Backend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../device.html">5. DEVICE(SD)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SIAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">2. Hardware</a></li>
+      <li class="breadcrumb-item active">2.3 UART</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/pages/hardware/uart.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="uart">
+<h1>2.3 UART<a class="headerlink" href="#uart" title="Link to this heading"></a></h1>
+<section id="uart-technical-specification">
+<h2>2.3.1 UART Technical Specification<a class="headerlink" href="#uart-technical-specification" title="Link to this heading"></a></h2>
+<p><img alt="alt text" src="../../_images/image-211.png" /></p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>UART is a universal serial data bus designed for asynchronous communication. The bidirectional nature of the bus facilitates full-duplex transmission and reception. UART operates by transmitting data bits one by one. Typically, three wires are utilised to complete the communication: the transmission line (TX), the reception line (RX), and the ground line (GND). The TX and RX of both parties must be cross-connected, while the GND can be connected for normal communication.</p>
+</section>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>2-pin full-duplex external interfaces</p></li>
+<li><p>8-bit data word, optional even or odd parity bit per byte</p></li>
+<li><p>1 stop bit</p></li>
+<li><p><font color=black>32 x 8b RX buffer </font></p></li>
+<li><p><font color=black>32 x 8b TX buffer </font></p></li>
+<li><p>Programmable baud rate</p></li>
+</ul>
+</section>
+</section>
+<section id="theory-of-operation">
+<h2>2.3.2 Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Link to this heading"></a></h2>
+<section id="communication-protoco">
+<h3>Communication Protoco<a class="headerlink" href="#communication-protoco" title="Link to this heading"></a></h3>
+<p>During idle periods, the TX/RX serial lines maintain a high state. Data transmission commences with a START bit, when the high idle state transitions from 1 to 0, followed by 8 data bits. The least significant bit is transmitted first. If the parity feature is enabled, an odd or even parity bit is inserted after the data bits. Conclusively, a STOP bit, maintained at logic 1, signifies the completion of one byte of data transfer.</p>
+<p><img alt="alt text" src="../../_images/image-271.png" /></p>
+<div>  
+<div align=center><div>   
+UART Communication Frame  <div>
+<div align=left><div>    </section>
+<section id="transmission">
+<h3>Transmission<a class="headerlink" href="#transmission" title="Link to this heading"></a></h3>
+<p>Writing to <code class="docutils literal notranslate"><span class="pre">WDATA</span></code>register enqueues a data byte into the 32-byte deep write FIFO, thereby triggering the transmit module to initiate UART TX serial data transfer. The TX module dequeues the byte from the FIFO and shifts it bit by bit onto the UART TX pin on the positive edges of the baud clock.</p>
+<p>In the event that TX is not enabled, data written into the FIFO will be accumulated and transmitted once TX is enabled.</p>
+<p>Upon the FIFO becoming empty as part of the transmission process, a TX FIFO done interrupt will be generated when the final byte has completed transmission. This interrupt is distinct from the TX FIFO watermark interrupt.</p>
+</section>
+<section id="reception">
+<h3>Reception<a class="headerlink" href="#reception" title="Link to this heading"></a></h3>
+<p>The RX module oversamples the RX input pin at 16 times the requested baud rate. Upon detecting a low state on the input, the receiver verifies that the line remains low half a bit-time later  to confirm the START bit. If the line returns to a high state, the potential glitch is disregarded. After identifying the START bit, the RX module samples at the center of each bit-time, collecting incoming serial bits into a character buffer. If the STOP bit is detected as high and the optional parity bit is correct, the data byte is enqueued into the 32-byte deep RX FIFO. The data can then be retrieved by reading the <code class="docutils literal notranslate"><span class="pre">RDATA</span></code> register.</p>
+</section>
+</section>
+<section id="design-verification">
+<h2>2.3.3 Design Verification<a class="headerlink" href="#design-verification" title="Link to this heading"></a></h2>
+<p><strong>Goals</strong></p>
+<p>Verify UART IP features by running dynamic simulations with a SV/UVM based testbench</p>
+<p><strong>Design features</strong></p>
+<p>For detailed information on UART design features, please see the <strong>UART Technical Specification</strong>.</p>
+<p><strong>Testbench architecture</strong></p>
+<p>Top level testbench is located at /trunk/hw/d2dv100_top/dv/dut_MEISHAV100_TOP_wrapper.sv. It instantiates the TOP DUT module /trunk/hw/d2dv100_top/rtl/top/MEISHAV100_TOP.sv. In addition, it instantiates the following interfaces, connects them to the DUT and sets their handle into <code class="docutils literal notranslate"><span class="pre">uvm_config_db</span></code>:</p>
+<ul class="simple">
+<li><p>Clock and reset interface</p></li>
+<li><p>Tilelink host interface</p></li>
+<li><p>UART IOs</p></li>
+</ul>
+<p><strong>Global types &amp; methods</strong></p>
+<p>All common types and methods defined at the package level can be found in <code class="docutils literal notranslate"><span class="pre">uart_env_pkg</span></code></p>
+<p><strong>TL_agent</strong></p>
+<p>UART instantiates <code class="docutils literal notranslate"><span class="pre">tl_agent</span></code> which provides the ability to drive and independently monitor random traffic via TL host interface into UART device.</p>
+<p><strong>UART_agent</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">UART</span> <span class="pre">agent</span></code> is used to drive and monitor UART items, which also provides basic coverage on data, parity, baud rate etc. These baud rates are supported: 9600, 115200, 230400, 1Mbps(1048576), 2Mbps(2097152)</p>
+<section id="testplan">
+<h3>2.3.3.1 Testplan<a class="headerlink" href="#testplan" title="Link to this heading"></a></h3>
+<p>This validation environment encompasses a substantial amount of supplementary code; however, the parent classes may introduce anomalies or superfluous functionalities. Consequently, it is permissible to directly alter the inherited parent class to the corresponding UVM base class, as necessitated</p>
+<section id="develop-an-agent">
+<h4>2.3.3.1.1 Develop an agent<a class="headerlink" href="#develop-an-agent" title="Link to this heading"></a></h4>
+<p>In the environment written this time, <code class="docutils literal notranslate"><span class="pre">uart</span></code>, as <code class="docutils literal notranslate"><span class="pre">slave_agent</span></code>, is driven by soc, so uart_agent only contains a driver, which is used to collect signals from the uart port during the test.</p>
+<section id="uart-agent-cfg-sv">
+<h5>uart_agent_cfg.sv<a class="headerlink" href="#uart-agent-cfg-sv" title="Link to this heading"></a></h5>
+<p>The baud rate, parity check bit and other attributes of uart are defined, and a uart interface is declared for monitor to collect data. There are 7 functions in this file, which are:<code class="docutils literal notranslate"><span class="pre">set_uart_period_glitch_pct、get_uart_period_glitch_pct、set_baud_rate、set_parity、set_max_drift_cycle_pct、get_max_drift_cycle_pct、reset_asserted、reset_deasserted</span></code>.</p>
+</section>
+<section id="uart-agent-pkg-sv">
+<h5>uart_agent_pkg.sv<a class="headerlink" href="#uart-agent-pkg-sv" title="Link to this heading"></a></h5>
+<p>The library and files used by uart_agent are imported, and some enumerated variables are defined, such as BaudRate(baud rate), transmission direction (single, dual, quad), etc., which is convenient for us to use.</p>
+</section>
+<section id="uart-agent-sv">
+<h5>uart_agent.sv<a class="headerlink" href="#uart-agent-sv" title="Link to this heading"></a></h5>
+<p>A <code class="docutils literal notranslate"><span class="pre">uart_monitor</span></code> and <code class="docutils literal notranslate"><span class="pre">uart_agent_config</span></code> are defined, <code class="docutils literal notranslate"><span class="pre">uart_if</span></code> as set in <code class="docutils literal notranslate"><span class="pre">config_db</span></code> is passed to<code class="docutils literal notranslate"> <span class="pre">cfg.uart_if</span></code>, and <code class="docutils literal notranslate"><span class="pre">uart_cfg</span></code> is set to the database.</p>
+</section>
+<section id="uart-driver-sv">
+<h5>uart_driver.sv<a class="headerlink" href="#uart-driver-sv" title="Link to this heading"></a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">uart_driver</span></code> class inherits from <code class="docutils literal notranslate"><span class="pre">dv_base_driver</span></code> and is used to drive transmission and receive operations in the simulation environment of UART. It is responsible for getting the data item <code class="docutils literal notranslate"><span class="pre">uart_item</span></code> from the sequencer and driving it to the UART interface. This class mainly simulates the receiving process of data by controlling the received signal of the UART interface<code class="docutils literal notranslate"><span class="pre">uart_rx</span></code>.</p>
+</section>
+<section id="main-tasks-and-functions">
+<h5>Main tasks and functions:<a class="headerlink" href="#main-tasks-and-functions" title="Link to this heading"></a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">run_phase</span></code>:<br /><code class="docutils literal notranslate"><span class="pre">run_phase</span></code> is one of the UVM simulation phases, in which the driver first calls the <code class="docutils literal notranslate"><span class="pre">reset_signals</span></code> method to reset the UART interface signal, and then enters the<code class="docutils literal notranslate"> <span class="pre">get_and_drive</span></code>task, continuously fetching data from the sequencer and driving the transmission.</p>
+<p><code class="docutils literal notranslate"><span class="pre">reset_signals</span></code>:<br />This task is used to reset the UART received signal (’ uart_rx ‘) to ensure that the signal is in a known state at the start of the simulation.
+<code class="docutils literal notranslate"><span class="pre">set_rx</span></code> :
+The <code class="docutils literal notranslate"><span class="pre">set_rx</span></code> task is responsible for setting the value of the received signal (<code class="docutils literal notranslate"><span class="pre">uart_rx</span></code>) of the UART, while randomly introducing some small amplitude signal failures (usually 10% of the clock cycle) according to the configuration. This function is used to simulate the signal jitter and faults that may exist in real hardware, so as to test the fault tolerance of the system to these abnormal conditions.</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_and_drive</span></code>:<br />This task takes the data item (<code class="docutils literal notranslate"><span class="pre">uart_item</span></code>) from the sequencer (<code class="docutils literal notranslate"><span class="pre">seq_item_port</span></code>) and drives it to the UART interface based on the information in the configuration and request.<br />If parity is enabled (<code class="docutils literal notranslate"><span class="pre">en_parity</span></code>) or the parity configuration is overridden in the request (<code class="docutils literal notranslate"> <span class="pre">ovrd_en_parity</span></code>), it transmits all data bits including the parity bits to the ‘uart_rx’ signal.
+This task also handles the situation during a reset, and if a reset signal is detected, the currently transmitted data item is abandoned.</p>
+<p><code class="docutils literal notranslate"><span class="pre">wait_uart_rx_cycle</span></code>:<br />The <code class="docutils literal notranslate"><span class="pre">wait_uart_rx_cycle</span></code> task is used to wait for the next clock cycle when the UART receives a signal. This can be done by waiting for the callback function (<code class="docutils literal notranslate"><span class="pre">drv_rx_cb</span></code>) in the simulation environment or by detecting the reset signal.
+The task monitors the reset signal or UART clock event through the <code class="docutils literal notranslate"><span class="pre">fork</span></code> mechanism and chooses to end the current cycle based on the simulation.</p>
+</section>
+<section id="uart-if-sv">
+<h5>uart_if.sv<a class="headerlink" href="#uart-if-sv" title="Link to this heading"></a></h5>
+<p>The uart interface provides data for the monitor. Contains the 2 basic signals of uart and some signals for debugging.</p>
+</section>
+<section id="uart-item-sv">
+<h5>uart_item.sv<a class="headerlink" href="#uart-item-sv" title="Link to this heading"></a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">uart_item</span></code> class is a UVM class that inherits from <code class="docutils literal notranslate"><span class="pre">uvm_sequence_item</span></code> and represents the basic data unit that is transferred in UART communication. This class defines the basic structure of a UART packet, including the start bit, stop bit, data, parity and other information, and provides some constraints and methods to control the randomization and use of these fields.</p>
+</section>
+<section id="uart-monitor-sv">
+<h5>uart_monitor.sv<a class="headerlink" href="#uart-monitor-sv" title="Link to this heading"></a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">tx_analysis_port</span></code>and <code class="docutils literal notranslate"><span class="pre">rx_analysis_port</span></code> are used to collect data transmitted and received by the UART respectively and to pass this data to the <code class="docutils literal notranslate"><span class="pre">scoreboard</span></code> for further analysis and verification.</p>
+</section>
+<section id="id1">
+<h5>Main tasks and functions:<a class="headerlink" href="#id1" title="Link to this heading"></a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">collect_tx_data</span></code>：<br />This task monitors the UART transmission signal (<code class="docutils literal notranslate"><span class="pre">uart_tx</span> </code>) and collects data for each transmission. When <code class="docutils literal notranslate"><span class="pre">uart_tx</span></code> is low and <code class="docutils literal notranslate"><span class="pre">tx_monitor</span></code> is enabled, the data collection process begins.</p>
+<p>The collection process consists of getting the start bit, the data bit, the check bit (if enabled), and finally the stop bit. Each bit is collected via a callback function of the monitor interface.
+After the collection is complete, the task checks whether the check bit is correct and passes the collected data to the tx_analysis_port for further analysis by the scoreboard.</p>
+<p><code class="docutils literal notranslate"><span class="pre">collect_rx_data</span></code>：<br />This task monitors the UART reception signal (<code class="docutils literal notranslate"><span class="pre">uart_rx</span></code>) and collects data on each reception. Similar to the <code class="docutils literal notranslate"><span class="pre">collect_tx_data</span></code>task, data collection begins when <code class="docutils literal notranslate"><span class="pre">uart_rx</span></code> is low and <code class="docutils literal notranslate"><span class="pre">rx_monitor</span></code> is enabled.<br />The collection process consists of getting the start bit, the data bit, the check bit (if enabled), and finally the stop bit. The collection of each bit is also done through the callback function of the monitor interface.<br />After the collection is complete, the task checks whether the check bit is correct and passes the collected data to the rx_analysis_port for further analysis by the scoreboard.<br /><code class="docutils literal notranslate"><span class="pre">drive_tx_clk</span></code> and <code class="docutils literal notranslate"><span class="pre">drive_rx_clk</span></code>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">drive_tx_clk</span></code>and<code class="docutils literal notranslate"><span class="pre">drive_rx_clk</span></code>are used to drive the transmission and reception of the clock signal of the UART, respectively, to ensure that the data is collected within the correct clock cycle.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mon_tx_stable</span></code>:<br />The <code class="docutils literal notranslate"><span class="pre">mon_tx_stable</span></code> task is responsible for monitoring the stability of the UART transmitted signal and checking whether the signal remains stable for a specified clock period.</p>
+<p><code class="docutils literal notranslate"><span class="pre">process_reset</span></code>:<br /><code class="docutils literal notranslate"><span class="pre">process_reset</span></code> are used to reset the UART. During the reset, data collection is stopped. After the reset is complete, the data collection process is restarted.</p>
+</section>
+<section id="uart-logger-sv">
+<h5>uart_logger.sv<a class="headerlink" href="#uart-logger-sv" title="Link to this heading"></a></h5>
+<p>The uart_logger class is a UVM component that inherits from the uvm_component and is used to capture the log data transferred from the UART and store it in a log file or print it in a simulation log.</p>
+</section>
+<section id="uart-base-agent-core">
+<h5>uart_base_agent.core<a class="headerlink" href="#uart-base-agent-core" title="Link to this heading"></a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">.core</span> </code>file is the configuration file that fusesoc uses to manage the project and can copy other written files and then make changes to several parts.</p>
+</section>
+</section>
+<section id="develop-an-env">
+<h4>2.3.3.1.2 Develop an env<a class="headerlink" href="#develop-an-env" title="Link to this heading"></a></h4>
+<section id="uart-scoreboard-sv">
+<h5>uart_scoreboard.sv<a class="headerlink" href="#uart-scoreboard-sv" title="Link to this heading"></a></h5>
+<p>Define four queues to store the expected and actual write data and read data. The expected data is obtained from the tl-agent, and the actual data is obtained from the uart-agent. Retrieve the uart data using <code class="docutils literal notranslate"><span class="pre">uvm_blocking_get_port</span></code> and compare the expected data with the actual data. However, the current scoreboard has some problems and is not used in the current validation environment.</p>
+</section>
+<section id="uart-env-sv">
+<h5>uart_env.sv<a class="headerlink" href="#uart-env-sv" title="Link to this heading"></a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">uart_agent,</span> <span class="pre">uart_agent_cfg,</span> <span class="pre">uart_scoreboard,</span> <span class="pre">and</span> <span class="pre">uvm_tlm_analysis_fifo</span></code> (connecting uart_scoreboard and uart_monitor) are defined.</p>
+</section>
+<section id="uart-env-pkg-sv">
+<h5>uart_env_pkg.sv<a class="headerlink" href="#uart-env-pkg-sv" title="Link to this heading"></a></h5>
+<p>The libraries and files used by uart_env are imported.</p>
+</section>
+<section id="uart-base-env-core">
+<h5>uart_base_env.core<a class="headerlink" href="#uart-base-env-core" title="Link to this heading"></a></h5>
+<p>The configuration file for uart_env, which provides dependencies for uart_test.</p>
+</section>
+</section>
+<section id="develop-an-sequence">
+<h4>2.3.3.1.3 Develop an sequence<a class="headerlink" href="#develop-an-sequence" title="Link to this heading"></a></h4>
+<section id="seq-lib-sv">
+<h5>seq_lib.sv<a class="headerlink" href="#seq-lib-sv" title="Link to this heading"></a></h5>
+<p>Base sequence of uart. The current environment uses uart_item in the agent folder that is the same as this sequence. Therefore, this file is not used currently.</p>
+</section>
+</section>
+<section id="develop-an-test">
+<h4>2.3.3.1.4 Develop an test<a class="headerlink" href="#develop-an-test" title="Link to this heading"></a></h4>
+<section id="uart-test-sv">
+<h5>uart_test.sv<a class="headerlink" href="#uart-test-sv" title="Link to this heading"></a></h5>
+<p>The test is modified by referring to the tl-test written in the environment.</p>
+</section>
+<section id="uart-macros-svh">
+<h5>uart_macros.svh<a class="headerlink" href="#uart-macros-svh" title="Link to this heading"></a></h5>
+<p>The register base address and offset of uart are defined for our convenience.</p>
+</section>
+<section id="uart-test-v">
+<h5>uart_test.v<a class="headerlink" href="#uart-test-v" title="Link to this heading"></a></h5>
+<p>Refer to <code class="docutils literal notranslate"><span class="pre">tlul_test.sv</span></code> to write, mainly to change the <code class="docutils literal notranslate"><span class="pre">main_phase</span></code> code. The rest just defines a <code class="docutils literal notranslate"><span class="pre">uart_if</span></code> in <code class="docutils literal notranslate"><span class="pre">uart_base_test_cfg</span></code> and a <code class="docutils literal notranslate"><span class="pre">uart_env</span></code> in <code class="docutils literal notranslate"><span class="pre">uart_base_test</span></code>.</p>
+</section>
+<section id="uart-interface-definition">
+<h5>UART interface definition：<a class="headerlink" href="#uart-interface-definition" title="Link to this heading"></a></h5>
+<p>The uart_if interface is defined in the <code class="docutils literal notranslate"><span class="pre">uart_base_test_cfg</span></code> for communicating with the UART environment.<br />The UART environment is initialized：<br />Initialize the <code class="docutils literal notranslate"><span class="pre">uart_env</span></code> environment in uart_base_test, which is responsible for configuring and monitoring the behavior of the UART.</p>
+</section>
+<section id="register-configuration">
+<h5>Register configuration：<a class="headerlink" href="#register-configuration" title="Link to this heading"></a></h5>
+<p>In <code class="docutils literal notranslate"><span class="pre">main_phase</span></code>, data is written to the register of the UART mainly through the TileLink (TL) protocol agent (<code class="docutils literal notranslate"><span class="pre">TL-agent</span> </code>) to complete the register configuration. Compared with the Register Abstraction layer (RAL), TL-agent can interact with hardware more directly and is suitable for lower-level verification scenarios.</p>
+<p>Use TL-agent to configure UART control registers, including <code class="docutils literal notranslate"><span class="pre">DIV</span></code>, <code class="docutils literal notranslate"><span class="pre">TXCTRL</span></code>, <code class="docutils literal notranslate"><span class="pre">RXCTRL</span></code> and so on.
+After the configuration, the TL-agent writes the generated data to <code class="docutils literal notranslate"><span class="pre">uart_txfifo</span></code>.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="hardware-interfaces">
+<h2>2.3.4 Hardware Interfaces<a class="headerlink" href="#hardware-interfaces" title="Link to this heading"></a></h2>
+<p>The following table shows the uart connection method:</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Master_Port</th>
+<th style="text-align: center;">Slave_Port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Master_Tx</td>
+<td style="text-align: center;">Slave_Rx</td>
+</tr>
+<tr>
+<td style="text-align: center;">Master_Rx</td>
+<td style="text-align: center;">Slave_Tx</td>
+</tr>
+<tr>
+<td style="text-align: center;">GND</td>
+<td style="text-align: center;">GND</td>
+</tr>
+</tbody>
+</table><p>The following diagram shows the system block diagram of UART：</p>
+<div align=center>    <p><img alt="alt text" src="../../_images/image-61.png" /></p>
+<p>Block Diagram</p>
+<div>
+<div align=left><div>   </section>
+<section id="registers">
+<h2>2.3.5 Registers<a class="headerlink" href="#registers" title="Link to this heading"></a></h2>
+<section id="control-register">
+<h3>Control Register<a class="headerlink" href="#control-register" title="Link to this heading"></a></h3>
+<p>A serial port control register is a specialized type of register within communication interfaces, responsible for managing the configuration and control of serial communication lines. These registers are essential for facilitating and overseeing data transfers between devices that employ serial communication protocols.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">offset</th>
+<th style="text-align: center;">Name</th>
+<th style="text-align: center;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0x00</td>
+<td style="text-align: center;">txdata</td>
+<td style="text-align: center;">Transmit data register</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x04</td>
+<td style="text-align: center;">rxdata</td>
+<td style="text-align: center;">Receiver data register</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x08</td>
+<td style="text-align: center;">txctrl</td>
+<td style="text-align: center;">Transmit control register</td>
+</tr>
+<tr>
+<td style="text-align: center;">0x0C</td>
+<td style="text-align: center;">rxctrl</td>
+<td style="text-align: center;">Receive control register</td>
+</tr>
+<tr>
+<td style="text-align: center;">0X10</td>
+<td style="text-align: center;">ie</td>
+<td style="text-align: center;">UART interrupt enable</td>
+</tr>
+<tr>
+<td style="text-align: center;">0X14</td>
+<td style="text-align: center;">ip</td>
+<td style="text-align: center;">UART interrupt pending</td>
+</tr>
+<tr>
+<td style="text-align: center;">0X18</td>
+<td style="text-align: center;">div</td>
+<td style="text-align: center;">Baud rate divisor</td>
+</tr>
+</tbody>
+</table><p>The functions typically managed by these registers include:</p>
+</section>
+<section id="baud-rate-divisor-register-div">
+<h3>Baud Rate Divisor Register(div)<a class="headerlink" href="#baud-rate-divisor-register-div" title="Link to this heading"></a></h3>
+<p>It determines the speed of data transmission in bits per second (baud). The div register designates the divisor employed for the baud rate generation of the Tx and Rx channels. The input clock is derived from the bus clock. The reset value of the register is configured to div_init, and, given the anticipated frequency of the tlclk, it is calibrated to yield a 115200 baud output upon reset.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">tlclk (MHz)</th>
+<th style="text-align: center;">Target Baud (Hz)</th>
+<th style="text-align: center;">Divisor</th>
+<th style="text-align: center;">Actual Baud (Hz)</th>
+<th style="text-align: center;">Error (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">500</td>
+<td style="text-align: center;">31250</td>
+<td style="text-align: center;">16000</td>
+<td style="text-align: center;">31250</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">500</td>
+<td style="text-align: center;">115200</td>
+<td style="text-align: center;">4340</td>
+<td style="text-align: center;">115207</td>
+<td style="text-align: center;">0.0064</td>
+</tr>
+<tr>
+<td style="text-align: center;">500</td>
+<td style="text-align: center;">250000</td>
+<td style="text-align: center;">2000</td>
+<td style="text-align: center;">250000</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">500</td>
+<td style="text-align: center;">1843200</td>
+<td style="text-align: center;">271</td>
+<td style="text-align: center;">1845018</td>
+<td style="text-align: center;">0.099</td>
+</tr>
+<tr>
+<td style="text-align: center;">750</td>
+<td style="text-align: center;">31250</td>
+<td style="text-align: center;">24000</td>
+<td style="text-align: center;">31250</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">750</td>
+<td style="text-align: center;">115200</td>
+<td style="text-align: center;">6510</td>
+<td style="text-align: center;">6510</td>
+<td style="text-align: center;">0.0064</td>
+</tr>
+<tr>
+<td style="text-align: center;">750</td>
+<td style="text-align: center;">250000</td>
+<td style="text-align: center;">3000</td>
+<td style="text-align: center;">3000</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">750</td>
+<td style="text-align: center;">1843200</td>
+<td style="text-align: center;">407</td>
+<td style="text-align: center;">407</td>
+<td style="text-align: center;">0.024</td>
+</tr>
+</tbody>
+</table></section>
+<section id="transmit-data-register-txdata">
+<h3>Transmit Data Register (txdata)<a class="headerlink" href="#transmit-data-register-txdata" title="Link to this heading"></a></h3>
+<p>If the FIFO is capable of accepting a new entry, then writing to the txdata register queues the characters contained within the data field to the transmitting FIFO. Reading from txdata returns the current value of the full flag and sets the data field to zero. The full flag signifies whether the transmitting FIFO can accommodate the new entry. Post-setting, writes to the data field are disregarded.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Bits</strong></th>
+<th style="text-align: center;"><strong>Field Name</strong></th>
+<th style="text-align: center;"><strong>Attr.</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[7:0]</td>
+<td style="text-align: center;">data</td>
+<td style="text-align: center;">RW</td>
+</tr>
+<tr>
+<td style="text-align: center;">[30:8]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">full</td>
+<td style="text-align: center;">RO</td>
+</tr>
+</tbody>
+</table></section>
+<section id="receive-data-register-rxdata">
+<h3>Receive Data Register (rxdata)<a class="headerlink" href="#receive-data-register-rxdata" title="Link to this heading"></a></h3>
+<p>The read rxdata register extracts a character from the received FIFO and returns its value in the data field. The empty flag indicates whether the received FIFO is devoid of contents. Upon being set, the data field does not contain valid characters. Writes to rxdata are ignored.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Bits</strong></th>
+<th style="text-align: center;"><strong>Field Name</strong></th>
+<th style="text-align: center;"><strong>Attr.</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">[7:0]</td>
+<td style="text-align: center;">data</td>
+<td style="text-align: center;">RW</td>
+</tr>
+<tr>
+<td style="text-align: center;">[30:8]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">full</td>
+<td style="text-align: center;">RO</td>
+</tr>
+</tbody>
+</table></section>
+<section id="interrupt-registers-ip-and-ie">
+<h3>Interrupt Registers (ip and ie)<a class="headerlink" href="#interrupt-registers-ip-and-ie" title="Link to this heading"></a></h3>
+<p>The ip register is a read-only register that indicates pending interrupt conditions, while the read-write ie register controls which UART interrupts are enabled. ie was reset to 0.</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;"><strong>Bits</strong></th>
+<th style="text-align: center;"><strong>Field Name</strong></th>
+<th style="text-align: center;"><strong>Attr.</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">txwm</td>
+<td style="text-align: center;">RW</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">rxwm</td>
+<td style="text-align: center;">RW</td>
+</tr>
+<tr>
+<td style="text-align: center;">[31:2]</td>
+<td style="text-align: center;">Reserved</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="checklist">
+<h2>2.3.6 Checklist<a class="headerlink" href="#checklist" title="Link to this heading"></a></h2>
+<section id="design-checklist">
+<h3>Design Checklist<a class="headerlink" href="#design-checklist" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Item</th>
+<th style="text-align: center;">Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Documentation</td>
+<td style="text-align: center;">UART SPEC</td>
+<td style="text-align: center;">Done</td>
+</tr>
+<tr>
+<td style="text-align: center;">RTL</td>
+<td style="text-align: center;">Design</td>
+<td style="text-align: center;">Done</td>
+</tr>
+</tbody>
+</table></section>
+<section id="verification-checklist">
+<h3>Verification Checklist<a class="headerlink" href="#verification-checklist" title="Link to this heading"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Item</th>
+<th style="text-align: center;">Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Documentation</td>
+<td style="text-align: center;">VIP</td>
+<td style="text-align: center;">Done</td>
+</tr>
+<tr>
+<td style="text-align: center;">RTL</td>
+<td style="text-align: center;">Design</td>
+<td style="text-align: center;">Done</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gpio.html" class="btn btn-neutral float-left" title="2.2 GPIO" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spi.html" class="btn btn-neutral float-right" title="2.4 SPI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, writer38.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

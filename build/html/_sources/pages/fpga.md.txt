@@ -1,5 +1,5 @@
 
-# 3. Prototype Verificaton On FPGA     
+# 3. Prototype Verificaton     
 ## 3.1 FPGA Development  
 ### 3.1.1 FPGA Version  
 

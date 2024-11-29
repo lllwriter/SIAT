@@ -1,5 +1,5 @@
 
-# 5. DEVICE(SD)
+# 5. Device(SD)
 ##  5.1 SD Technical Specification  
 ### Description
 SD memory card is a new generation of memory device based on semiconductor flash memory, which is widely used in portable devices, such as digital cameras, smart phones and multimedia players, due to its excellent features such as small size, fast data transfer speed and hot-swappable.

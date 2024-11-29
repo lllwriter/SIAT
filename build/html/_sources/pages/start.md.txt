@@ -1,4 +1,4 @@
-# 1. START
+# 1. Start
 ## 1.1 Project    
 Design of a reconfigurable multi-core heterogeneous processor utilising RISC-V architecture.   
 

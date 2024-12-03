@@ -1,7 +1,8 @@
 
 # 2.5 JTAG  
 ## 2.5.1 JTAG Technical Specification    
-![alt text](photo/image-22.png)
+
+![alt text](photo/image-25.png)
 ### Description    
 JTAG (Joint Test Action Group), an international standard testing protocol conforming to IEEE 1149.1, is primarily used for internal chip testing. Many advanced devices, such as DSPs and FPGAs, support the JTAG protocol. The standard JTAG interface comprises four lines: TMS, TCK, TDI, and TDO, representing Mode Select, Clock, Data Input, and Data Output, respectively.
 

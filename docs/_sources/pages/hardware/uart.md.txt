@@ -1,6 +1,8 @@
 # 2.3 UART    
 ## 2.3.1 UART Technical Specification   
-![alt text](photo/image-21.png)
+
+![alt text](photo/image-20.png)  
+
 ### Description
 UART is a universal serial data bus designed for asynchronous communication. The bidirectional nature of the bus facilitates full-duplex transmission and reception. UART operates by transmitting data bits one by one. Typically, three wires are utilised to complete the communication: the transmission line (TX), the reception line (RX), and the ground line (GND). The TX and RX of both parties must be cross-connected, while the GND can be connected for normal communication.     
 ### Features

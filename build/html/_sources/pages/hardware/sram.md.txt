@@ -1,7 +1,8 @@
  
 # 2.7 SRAM
 ## 2.7.1 SRAM Controller Technical Specification     
-![alt text](photo/image-24.png)
+ 
+![alt text](photo/image-31.png)
 ### Description
 
 The SRAM controller incorporates the SRAM data and address scrambling device and provides CSRs for requesting the scrambling keys and triggering the hardware initialization feature. 

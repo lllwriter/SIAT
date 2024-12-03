@@ -1,7 +1,9 @@
 
 # 2.4 SPI    
 ## 2.4.1 SPI Technical Specification    
-![alt text](photo/image-25.png)
+
+![alt text](photo/image-21.png)  
+
 ###  Description  
 The SPI controller supports single-, dual-, and quad-channel protocols in host-only mode. The baseline controller provides a FIFO-based interface for executing programmed input/output operations. Software initiates transfers by queuing frames into the transmit FIFO; upon completion, the slave responses are placed in the receive FIFO.
 

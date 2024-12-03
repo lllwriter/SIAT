@@ -1,5 +1,6 @@
 # 2.6 QSPI    
 ## 2.6.1 QSPI Technical Specification  
+
 ![alt text](photo/image-23.png)
 ###  Description  
 SPI_1 is mounted on the MEISHAV100 as an SPI master, responsible for controlling external SPI data transfers. SPI_1 utilizes the open-source axi-spi-master code, which can be referenced at [https://github.com/pulp-platform/axi_spi_master](https://github.com/pulp-platform/axi_spi_master).  

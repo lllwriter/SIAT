@@ -1,6 +1,8 @@
 # 2.2 GPIO  
 ## 2.2.1 GPIO Technical Specification  
-![alt text](photo/image-20.png)
+
+![alt text](photo/image-26.png)  
+
 ### Description
 The GPIO module facilitates software communication through general-purpose I/O pins with a high degree of flexibility. Each of the 32 individual bits can be configured as peripheral outputs using two distinct modes. Similarly, each of these 32 bits can be accessed by software as peripheral inputs. The connectivity of these peripheral inputs and outputs to the chip's I/O pins is beyond the scope of this document. Refer to the Comportability Specification for detailed peripheral I/O options at the top chip level.
 
